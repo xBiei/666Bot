@@ -1,24 +1,13 @@
 {
-	"name": "666Bot",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "node ."
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"dependencies": {
-		"@discordjs/opus": "^0.5.0",
-		"@discordjs/voice": "^0.7.5",
-		"discord.js": "^13.5.0",
-		"express": "^4.17.1",
-		"ffmpeg-static": "^4.3.0",
-		"fs": "0.0.1-security",
-		"libsodium-wrappers": "^0.7.9",
-		"request": "^2.88.2",
-		"simple-youtube-api": "^5.2.1",
-		"ytdl-core": "^4.9.1"
-	}
+  "dependencies": {
+    "@discordjs/opus": "^0.7.0",
+    "@discordjs/voice": "^0.8.0",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "ffmpeg-static": "^5.0.0",
+    "libsodium-wrappers": "^0.7.9",
+    "node-opus": "^0.3.3",
+    "ytdl-core": "^4.11.0"
+  }
 }
