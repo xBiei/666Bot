@@ -35,7 +35,7 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
   var resource = createAudioResource(song.stream, {
     inlineVolume: true,
     inputType: song.type,
-    noSubscriber: NoSubscriberBehavior.Play
+    noSubscriber: NoSubscriberBehavior.Pause
   });
   console.log(song.type);
   resource.volume.setVolume(process.env.volume);
