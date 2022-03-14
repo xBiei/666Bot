@@ -13,7 +13,7 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
   let connection = getVoiceConnection(msg.guildId);
   const player = createAudioPlayer();
   const url = args[1];
-  console.log(args);
+
   if (!voiceChannel)
     return msg.channel.send('You need to be in a channel to execute this command!');
 
@@ -37,11 +37,11 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
     inputType: song.type,
     noSubscriber: NoSubscriberBehavior.Pause
   });
-  console.log(song.type);
+
   resource.volume.setVolume(process.env.volume);
   player.play(resource);
   connection.subscribe(player);
-  // msg.guild.me.setNickname('ム.')
+
   player.on(AudioPlayerStatus.Idle, () => {
     msg.guild.me.setNickname('ム.');
   });
@@ -55,6 +55,7 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
     msg.guild.me.setNickname('ム. (Paused)');
   });
   player.on('error', (err) => console.error(err));
+
   return msg.reply(`Playing: **[${videoName.video_details.title}]**`);
 };
 
