@@ -6,72 +6,58 @@
 // TODO: Rewrite this..
 // TODO: just don't forget it
 
-const express = require("express");
-const app = express();
-const fs = require("fs");
-const Discord = require("discord.js");
-require("dotenv").config();
+const fs = require('fs');
+const Discord = require('discord.js');
+require('dotenv').config();
 
 const client = new Discord.Client({
   intents: [
     Discord.Intents.FLAGS.GUILDS,
     Discord.Intents.FLAGS.GUILD_MEMBERS,
     Discord.Intents.FLAGS.GUILD_VOICE_STATES,
-    Discord.Intents.FLAGS.GUILD_MESSAGES,
-  ],
+    Discord.Intents.FLAGS.GUILD_MESSAGES
+  ]
 });
 const prefix = process.env.prefix;
 
-app.get("/", (req, res) => {
-  res.send("Server is up.");
-});
-
-app.listen(3000, () => {
-  console.log("server started");
-});
-
 client.commands = new Map();
-musicQueue = new Map();
+// musicQueue = new Map();
 
-client.on("ready", () => {
+client.on('ready', () => {
   console.log(`${client.user.tag}`);
   console.log(`${client.guilds.cache.size} Servers`);
   console.log(`${client.users.cache.size} Members`);
   console.log(`${client.channels.cache.size} Channels`);
-  console.log(`[ ${client.guilds.cache.map((g) => g.name).join(", \n ")} ]`);
+  console.log(`[ ${client.guilds.cache.map((g) => g.name).join(', \n ')} ]`);
   console.log("Bot's Up!");
-  client.user.setActivity(`What r u looking at, B...?`, { type: "PLAYING" });
+  client.user.setActivity(`What r u looking at, B...?`, { type: 'PLAYING' });
 
-  fs.readdir("./cmds/", (error, files) => {
+  fs.readdir('./cmds/', (error, files) => {
     if (error) throw error;
 
     files.forEach((file) => {
-      if (!file.endsWith(".js")) return;
+      if (!file.endsWith('.js')) return;
 
-      try {
-        const properties = require(`./cmds/${file}`);
+      const properties = require(`./cmds/${file}`);
 
-        properties.help.aliases.forEach((alias) => {
-          client.commands.set(alias, properties);
-        });
+      properties.help.aliases.forEach((alias) => {
+        client.commands.set(alias, properties);
+      });
 
-        client.commands.set(properties.help.name, properties);
-      } catch (error) {
-        throw error;
-      }
+      client.commands.set(properties.help.name, properties);
     });
   });
 });
 
-client.on("messageCreate", (message) => {
+client.on('messageCreate', (message) => {
   if (message.content.slice(0, prefix.length) != prefix) return;
   if (message.author.bot) return;
 
-  const embed = new Discord.MessageEmbed().setColor("#000035");
-  const args = message.content.substring(3).split(" ");
-  const cmd = message.content.substring(3).split(" ").shift();
+  const embed = new Discord.MessageEmbed().setColor('#000035');
+  const args = message.content.substring(3).split(' ');
+  const cmd = message.content.substring(3).split(' ').shift();
   const command = client.commands.get(cmd);
-  
+
   if (command) command.run(client, message, cmd, args, Discord);
 
   if (!command) {

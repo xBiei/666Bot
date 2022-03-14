@@ -4,10 +4,12 @@
     "@discordjs/voice": "^0.8.0",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
+    "eslint": "^8.11.0",
     "express": "^4.17.3",
     "ffmpeg-static": "^5.0.0",
     "libsodium-wrappers": "^0.7.9",
     "node-opus": "^0.3.3",
+    "play-dl": "^1.9.1",
     "ytdl-core": "^4.11.0"
   }
 }
