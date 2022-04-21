@@ -11,5 +11,7 @@ jobs:
       name: NPM Version 16
       with:
         node-version: '16'
-    - run: yarn
-    
+    - name: 🔧 Install latest modules
+      run: yarn
+    - name: 🔁Restart the bot
+      run: pm2 restart "index"
