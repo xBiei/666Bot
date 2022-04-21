@@ -9,6 +9,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 require('dotenv').config();
+const schedule = require('node-schedule');
 
 const client = new Discord.Client({
   intents: [
@@ -58,13 +59,24 @@ client.on('messageCreate', (message) => {
   const cmd = message.content.substring(3).split(' ').shift();
   const command = client.commands.get(cmd);
 
-  if (command) command.run(client, message, cmd, args, Discord);
+  if (command) command.run(client, message, cmd, args, Discord).catch((err) => console.log(err));
 
   if (!command) {
     embed.setDescription(`
         For a list of commands, use (**${prefix} help**)`);
-    return message.channel.send({ embeds: [embed] });
+    return message.channel.send({ embeds: [embed] }).catch((err) => console.log(err));
   }
+});
+
+const upStatus = schedule.scheduleJob('0 15 * * *', function () {
+  client.channels.cache
+    .get('954906018414989433')
+    .send("I'm Still Here..")
+    .catch((err) => console.log(err));
+});
+
+client.on('error', (err) => {
+  console.log('An Error Has Occured in Client: ' + err);
 });
 
 client.login(process.env.token);

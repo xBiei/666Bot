@@ -13,7 +13,7 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
   let connection = getVoiceConnection(msg.guildId);
   const player = createAudioPlayer();
   const url = args[1];
-
+  console.log(args);
   if (!voiceChannel)
     return msg.channel.send('You need to be in a channel to execute this command!');
 
@@ -22,7 +22,7 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
       channelId: voiceChannel.id,
       guildId: voiceChannel.guild.id,
       adapterCreator: msg.channel.guild.voiceAdapterCreator
-    });
+    }).catch((err) => console.log(err));
   }
 
   if (!url) return msg.reply('Bruh, u forgot the url.');
@@ -36,26 +36,33 @@ module.exports.run = async (client, msg, cmd, args, Discord) => {
     inlineVolume: true,
     inputType: song.type,
     noSubscriber: NoSubscriberBehavior.Pause
-  });
-
-  resource.volume.setVolume(process.env.volume);
-  player.play(resource);
-  connection.subscribe(player);
-
-  player.on(AudioPlayerStatus.Idle, () => {
-    msg.guild.me.setNickname('ム.');
-  });
-  player.on(AudioPlayerStatus.Playing, () => {
-    msg.guild.me.setNickname('ム. (Playing)');
-  });
-  player.on(AudioPlayerStatus.AutoPaused, () => {
-    msg.guild.me.setNickname('ム. (Paused)');
-  });
-  player.on(AudioPlayerStatus.Paused, () => {
-    msg.guild.me.setNickname('ム. (Paused)');
-  });
+  }).catch((err) => console.log(err));
+  console.log(song.type);
+  resource.volume.setVolume(process.env.volume).catch((err) => console.log(err));
+  player.play(resource).catch((err) => console.log(err));
+  connection.subscribe(player).catch((err) => console.log(err));
+  // msg.guild.me.setNickname('ム.')
+  player
+    .on(AudioPlayerStatus.Idle, () => {
+      msg.guild.me.setNickname('ム.');
+    })
+    .catch((err) => console.log(err));
+  player
+    .on(AudioPlayerStatus.Playing, () => {
+      msg.guild.me.setNickname('ム. (Playing)');
+    })
+    .catch((err) => console.log(err));
+  player
+    .on(AudioPlayerStatus.AutoPaused, () => {
+      msg.guild.me.setNickname('ム. (Paused)');
+    })
+    .catch((err) => console.log(err));
+  player
+    .on(AudioPlayerStatus.Paused, () => {
+      msg.guild.me.setNickname('ム. (Paused)');
+    })
+    .catch((err) => console.log(err));
   player.on('error', (err) => console.error(err));
-
   return msg.reply(`Playing: **[${videoName.video_details.title}]**`);
 };
 
