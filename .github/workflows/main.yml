@@ -7,8 +7,8 @@ jobs:
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v3
-    - name: NPM Version 16
     - uses: actions/setup-node@v3
+      name: NPM Version 16
       with:
         node-version: '16'
     - run: yarn
