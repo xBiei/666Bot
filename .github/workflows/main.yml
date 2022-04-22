@@ -13,5 +13,7 @@ jobs:
         node-version: '16'
     - name: 🔧 Install latest modules
       run: yarn
+    - name: 🔁 Set the token
+      run: cp /home/xbiei/.env.bak /home/xbiei/666Bot/666Bot/666Bot/666Bot/.env
     - name: 🔁Restart the bot
       run: pm2 restart "666"
