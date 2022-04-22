@@ -14,4 +14,4 @@ jobs:
     - name: 🔧 Install latest modules
       run: yarn
     - name: 🔁Restart the bot
-      run: pm2 restart "index"
+      run: pm2 restart "666"
