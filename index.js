@@ -62,9 +62,7 @@ client.on('messageCreate', (message) => {
   if (command) command.run(client, message, cmd, args, Discord).catch((err) => console.log(err));
 
   if (!command) {
-    embed.setDescription(`
-        For a list of commands, use (**${prefix} help**)`);
-    return message.channel.send({ embeds: [embed] }).catch((err) => console.log(err));
+    return console.log('not found');
   }
 });
 
