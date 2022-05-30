@@ -16,6 +16,6 @@ jobs:
     - name: 🔁 Set the token
       run: cp /home/xbiei/.env.bak /home/xbiei/666Bot/666Bot/666Bot/666Bot/.env
     - name: 🔁Compile TS to JS
-      run: yarn bu    ild      
+      run: yarn build      
     - name: 🔁Restart the bot
       run: pm2 restart "666"
