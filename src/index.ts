@@ -46,7 +46,6 @@ const client = new CustomClient({
     Intents.FLAGS.GUILD_MESSAGES
   ]
 });
-const prefix = process.env.prefix;
 
 client.commands = new Collection();
 client.slashCommands = new Collection();
@@ -68,37 +67,10 @@ client.on('ready', async () => {
         properties.info.slash?.toJSON() as RESTPostAPIApplicationCommandsJSONBody
       );
       client.commands.set(properties.info.name, properties);
-      //  else if (properties.info.aliases) {
-      //   properties.info.aliases.forEach((alias) => client.commands.set(alias, properties));
-      // } else client.commands.set(properties.info.name, properties);
     });
     restApi(client, client.slashCommands);
   });
 });
-
-// client.on('messageCreate', async (message) => {
-//   if (message.content.slice(0, prefix?.length) != prefix) return;
-//   if (message.author.bot) return;
-
-//   const args = message.content.substring(3).split(' ');
-//   const cmd = message.content.substring(3).split(' ').shift();
-//   const command = client.commands.get(cmd ? cmd : 'null');
-//   if (!command) return console.log('not found');
-
-//   if (command?.info.group === 'voice') {
-//     try {
-//       await command.run(message, args, musicQueue, client);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   } else {
-//     try {
-//       await command.run(message, args, undefined, client);
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   }
-// });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
   if (!interaction.isCommand()) return;

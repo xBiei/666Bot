@@ -11,7 +11,6 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     return interaction.reply('You need to be in a channel to execute this command!');
 
   connection?.destroy();
-  // msg.guild.me.setNickname('ム. (Idle)')
   interaction.reply(`Bye bb.`);
 };
 

@@ -53,8 +53,6 @@ module.exports.execute = async (interaction: CommandInteraction, musicQueue: Que
 
   player.on('error', (err) => console.error(err));
 
-  // if (!info) info = {title: 'Unknown', type: 'Unknown'};
-
   return interaction.reply(`Playing: **[${title}]**`);
 };
 
