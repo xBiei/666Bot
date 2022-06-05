@@ -1,7 +1,16 @@
 import { readdir } from 'fs';
 import path from 'path';
-import { Client, Collection, Intents, Interaction, Message } from 'discord.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import {
+  Client,
+  Collection,
+  CommandInteraction,
+  ContextMenuInteraction,
+  Intents,
+  Interaction,
+  Message,
+  UserContextMenuInteraction
+} from 'discord.js';
+import { ContextMenuCommandBuilder, SlashCommandBuilder } from '@discordjs/builders';
 import { AudioResource, VoiceConnection } from '@discordjs/voice';
 import { restApi } from './utils/rest';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v9/interactions';
@@ -27,6 +36,7 @@ interface CommandData {
   ) => Promise<void>;
   info: {
     slash?: SlashCommandBuilder;
+    context?: ContextMenuCommandBuilder;
     name: string;
     group?: string;
     description: string;
@@ -36,6 +46,7 @@ interface CommandData {
 export class CustomClient extends Client {
   commands: Collection<String, CommandData> = new Collection();
   slashCommands: Collection<String, RESTPostAPIApplicationCommandsJSONBody> = new Collection();
+  contextCommands: Collection<String, RESTPostAPIApplicationCommandsJSONBody> = new Collection();
 }
 
 const client = new CustomClient({
@@ -49,6 +60,7 @@ const client = new CustomClient({
 
 client.commands = new Collection();
 client.slashCommands = new Collection();
+client.contextCommands = new Collection();
 let musicQueue: Collection<string, QueueObject> = new Collection();
 
 client.on('ready', async () => {
@@ -62,30 +74,41 @@ client.on('ready', async () => {
 
       const properties: CommandData = require(`${path.resolve(__dirname, 'cmds')}/${file}`);
 
+      properties.info.context
+        ? client.contextCommands.set(
+            properties.info.name,
+            properties.info.context?.toJSON() as RESTPostAPIApplicationCommandsJSONBody
+          )
+        : null;
+
       client.slashCommands.set(
         properties.info.name,
         properties.info.slash?.toJSON() as RESTPostAPIApplicationCommandsJSONBody
       );
+      properties.info.aliases?.forEach((alias) => {
+        client.commands.set(alias, properties);
+      });
+
       client.commands.set(properties.info.name, properties);
     });
-    restApi(client, client.slashCommands);
+    restApi(client, client.slashCommands, client.contextCommands);
   });
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
-  if (!interaction.isCommand()) return;
-
-  const command = client.commands.get(interaction.commandName);
-  if (!command) return;
-  try {
-    await command.execute(interaction, musicQueue);
-  } catch (error) {
-    console.log(error);
-    await interaction.reply({
-      content: 'There was an error while executing this command!',
-      ephemeral: true
-    });
-  }
+  if (interaction.isCommand() || interaction.isContextMenu() || interaction.isUserContextMenu()) {
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
+    try {
+      await command.execute(interaction, musicQueue);
+    } catch (error) {
+      console.log(error);
+      await interaction.reply({
+        content: 'There was an error while executing this command!',
+        ephemeral: true
+      });
+    }
+  } else console.log(interaction);
 });
 
 client.on('error', (err) => {
