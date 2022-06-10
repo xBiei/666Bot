@@ -9,6 +9,7 @@
     "@discordjs/opus": "^0.7.0",
     "@discordjs/rest": "^0.4.1",
     "@discordjs/voice": "^0.8.0",
+    "better-sqlite3": "^7.5.3",
     "discord-api-types": "^0.33.1",
     "discord.js": "^13.6.0",
     "dotenv": "^16.0.0",
@@ -17,7 +18,8 @@
     "libsodium-wrappers": "^0.7.9",
     "node-opus": "^0.3.3",
     "opusscript": "^0.0.8",
-    "play-dl": "git+https://github.com/k2helix/play-dl-compiled.git"
+    "play-dl": "git+https://github.com/k2helix/play-dl-compiled.git",
+    "quick.db": "^9.0.2"
   },
   "devDependencies": {
     "@types/node": "^17.0.36",

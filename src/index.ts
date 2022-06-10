@@ -1,21 +1,13 @@
 import { readdir } from 'fs';
 import path from 'path';
-import {
-  Client,
-  Collection,
-  CommandInteraction,
-  ContextMenuInteraction,
-  Intents,
-  Interaction,
-  Message,
-  UserContextMenuInteraction
-} from 'discord.js';
+import { Client, Collection, Intents, Interaction, Message } from 'discord.js';
 import { ContextMenuCommandBuilder, SlashCommandBuilder } from '@discordjs/builders';
 import { AudioResource, VoiceConnection } from '@discordjs/voice';
 import { restApi } from './utils/rest';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v9/interactions';
+import { QuickDB } from 'quick.db';
 require('dotenv').config();
-
+const db = new QuickDB();
 export interface QueueObject {
   id: string;
   voice: string;
@@ -101,6 +93,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     if (!command) return;
     try {
       await command.execute(interaction, musicQueue);
+      await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
     } catch (error) {
       console.log(error);
       await interaction.reply({
