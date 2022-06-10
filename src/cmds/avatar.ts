@@ -25,7 +25,7 @@ module.exports.execute = async (
       text: `Meow :3`
     });
 
-  return interaction.reply({ embeds: [userEmbed], ephemeral: msg });
+  return await interaction.reply({ embeds: [userEmbed], ephemeral: msg });
 };
 
 module.exports.info = {

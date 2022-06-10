@@ -3,7 +3,8 @@ import { CommandInteraction } from 'discord.js';
 import { CustomClient } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, client: CustomClient) => {
-  if (interaction.user.id !== process.env.owner) return interaction.reply('You are not the owner!');
+  if (interaction.user.id !== process.env.owner)
+    return await interaction.reply('You are not the owner!');
 
   const clean = async (client: CustomClient, text: any) => {
     if (text && text.constructor.name == 'Promise') text = await text;
@@ -24,11 +25,11 @@ module.exports.execute = async (interaction: CommandInteraction, client: CustomC
     const cleaned = await clean(client, evaled);
     const MAX_CHARS = 3 + 2 + clean.length + 3;
     if (MAX_CHARS > 4000) {
-      interaction.reply({
+      await interaction.reply({
         files: [{ attachment: Buffer.from(cleaned), name: 'output.txt' }]
       });
     }
-    interaction.reply(codeBlock('js', cleaned));
+    await interaction.reply(codeBlock('js', cleaned));
   } catch (err) {
     console.log(err);
   }

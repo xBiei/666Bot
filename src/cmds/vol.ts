@@ -1,21 +1,22 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { getVoiceConnection } from '@discordjs/voice';
-import { CommandInteraction, Message } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { QueueObject } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
-  if (!interaction.inGuild()) return interaction.reply('This is Guild only Command!');
+  if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
   let connection = getVoiceConnection(interaction.guildId);
   const volume = interaction.options.getNumber('volume');
-  if (!volume) return interaction.reply(`Did u expect me to read your mind? gimme the vol u want`);
+  if (!volume)
+    return await interaction.reply(`Did u expect me to read your mind? gimme the vol u want`);
 
   if (isNaN(volume) || volume > 100) {
-    return interaction.reply('Vol can be set between **`1`** - **`100`**');
+    return await interaction.reply('Vol can be set between **`1`** - **`100`**');
   } else {
     const vol = volume / 100;
     // @ts-ignore
     connection._state.subscription.player._state.resource.volume.volume = vol;
-    interaction.reply(`Done ya bb, vol is **\`${volume}%\`**.`);
+    await interaction.reply(`Done ya bb, vol is **\`${volume}%\`**.`);
   }
 };
 

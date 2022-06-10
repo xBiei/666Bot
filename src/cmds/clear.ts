@@ -6,11 +6,13 @@ module.exports.execute = async (interaction: CommandInteraction, args: string[])
   const amount = parseInt(args[0]) + 1;
 
   if (isNaN(amount)) {
-    return interaction.reply('is that a number?');
+    return await interaction.reply('is that a number?');
   } else if (amount <= 1 || amount > 100) {
-    return interaction.reply('you need to input a number between 1 and 99.');
+    return await interaction.reply('you need to input a number between 1 and 99.');
   }
-  return (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(amount);
+  return await (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(
+    amount
+  );
 };
 
 module.exports.info = {

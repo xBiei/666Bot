@@ -57,7 +57,7 @@ module.exports.execute = async (
       }) as string
     });
 
-  return interaction.reply({ embeds: [userEmbed], ephemeral: msg });
+  return await interaction.reply({ embeds: [userEmbed], ephemeral: msg });
 };
 
 module.exports.info = {

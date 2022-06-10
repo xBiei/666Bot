@@ -11,7 +11,7 @@ import { validate, video_basic_info, stream } from 'play-dl';
 import { QueueObject } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
-  if (!interaction.inGuild()) return interaction.reply('This is Guild only Command!');
+  if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
   const voiceChannel = (interaction.member as GuildMember).voice.channel;
   let connection = getVoiceConnection(interaction.guildId);
   const player = createAudioPlayer({
@@ -24,7 +24,7 @@ module.exports.execute = async (interaction: CommandInteraction, musicQueue: Que
   let info: { title?: string; type: string };
   let title: string | undefined;
   if (!voiceChannel)
-    return interaction.reply('You need to be in a channel to execute this command!');
+    return await interaction.reply('You need to be in a channel to execute this command!');
 
   if (!connection) {
     connection = joinVoiceChannel({
@@ -35,7 +35,7 @@ module.exports.execute = async (interaction: CommandInteraction, musicQueue: Que
     });
   }
 
-  if ((await validate(url)) !== 'yt_video') return interaction.reply('not legit YT url.');
+  if ((await validate(url)) !== 'yt_video') return await interaction.reply('not legit YT url.');
 
   await video_basic_info(url).then((e) => {
     info = { title: e.video_details.title, type: e.video_details.type };
@@ -53,7 +53,7 @@ module.exports.execute = async (interaction: CommandInteraction, musicQueue: Que
 
   player.on('error', (err) => console.error(err));
 
-  return interaction.reply(`Playing: **[${title}]**`);
+  return await interaction.reply(`Playing: **[${title}]**`);
 };
 
 module.exports.info = {

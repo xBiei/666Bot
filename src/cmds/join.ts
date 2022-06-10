@@ -3,11 +3,11 @@ import { joinVoiceChannel } from '@discordjs/voice';
 import { CommandInteraction, GuildMember, InternalDiscordGatewayAdapterCreator } from 'discord.js';
 
 module.exports.execute = async (interaction: CommandInteraction) => {
-  if (!interaction.inGuild()) return interaction.reply('This is Guild only Command!');
+  if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
   const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
   if (!voiceChannel)
-    return interaction.reply('You need to be in a channel to execute this command!');
+    return await interaction.reply('You need to be in a channel to execute this command!');
 
   joinVoiceChannel({
     channelId: voiceChannel.id,
@@ -15,7 +15,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     adapterCreator: interaction.channel?.guild
       .voiceAdapterCreator as InternalDiscordGatewayAdapterCreator
   });
-  return interaction.reply('Coooming.');
+  return await interaction.reply('Coooming.');
 };
 
 module.exports.info = {
