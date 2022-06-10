@@ -19,8 +19,8 @@ module.exports.execute = async (
   ) as GuildMember;
   const msg =
     interaction instanceof UserContextMenuInteraction
-      ? true
-      : (interaction.options as CommandInteractionOptionResolver).getBoolean('send', true);
+      ? false
+      : (interaction.options as CommandInteractionOptionResolver).getBoolean('ephemeral', true);
 
   const userEmbed = new MessageEmbed()
     .setAuthor({
@@ -70,8 +70,8 @@ module.exports.info = {
     )
     .addBooleanOption((option) =>
       option
-        .setName('send')
-        .setDescription('Do you want to send this message to the chat?.')
+        .setName('ephemeral')
+        .setDescription('Do you want to hide this message from the chat?.')
         .setRequired(true)
     ),
   context: new ContextMenuCommandBuilder().setName('Get Info').setType(2),
