@@ -72,11 +72,12 @@ client.on('ready', async () => {
             properties.info.context?.toJSON() as RESTPostAPIApplicationCommandsJSONBody
           )
         : null;
-
-      client.slashCommands.set(
-        properties.info.name,
-        properties.info.slash?.toJSON() as RESTPostAPIApplicationCommandsJSONBody
-      );
+      properties.info.name === 'snippet'
+        ? null
+        : client.slashCommands.set(
+            properties.info.name,
+            properties.info.slash?.toJSON() as RESTPostAPIApplicationCommandsJSONBody
+          );
       properties.info.aliases?.forEach((alias) => {
         client.commands.set(alias, properties);
       });
