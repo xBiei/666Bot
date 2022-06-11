@@ -41,7 +41,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
 
   Util.splitMessage(snippet, { maxLength: 1015, append: '', prepend: '', char: ' ' }).forEach(
     (msg, i) => {
-      userEmbed.addField(`${i == 0 ? 'Snippet:' : '\u200B'}`, `\`\`\`${msg}\`\`\``, false);
+      userEmbed.addField(`${i == 0 ? 'Snippet:' : '\u200B'}`, `\`\`\`js\n${msg}\`\`\``, false);
     }
   );
 
