@@ -14,7 +14,7 @@ jobs:
     - name: 🔧 Install latest modules
       run: yarn
     - name: 🔁 Set the token
-      run: cp /home/xbiei/.env.bak /home/xbiei/666Bot/666Bot/666Bot/666Bot/.env
+      run: cp /home/xbiei/.env.bak /home/xbiei/666Bot/666Bot/666Bot/666Bot/dist/.env
     - name: 🔁Compile TS to JS
       run: yarn build      
     - name: 🔁Restart the bot
