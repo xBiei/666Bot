@@ -36,12 +36,13 @@ module.exports.execute = async (interaction: CommandInteraction) => {
 
   if (amount > 100) {
     const splitted = new Array(Math.floor(amount / 100)).fill(100).concat(amount % 100);
-    return splitted.forEach((num: number) => {
+    splitted.forEach((num: number) => {
       console.log(num);
       num == 100 ? (num = num - 1) : null;
       if (num === 0) return;
       (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(num);
     });
+    return interaction.reply({content: 'Done Done.', ephemeral: true})
   }
   return await (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(
     amount
