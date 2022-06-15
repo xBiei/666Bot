@@ -1,14 +1,47 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
+import {
+  CommandInteraction,
+  GuildMember,
+  NewsChannel,
+  TextChannel,
+  ThreadChannel
+} from 'discord.js';
 
-module.exports.execute = async (interaction: CommandInteraction, args: string[]) => {
-  if (interaction.user.id !== process.env.owner) return;
-  const amount = parseInt(args[0]) + 1;
+module.exports.execute = async (interaction: CommandInteraction) => {
+  if (
+    !interaction.guild?.me?.permissionsIn(interaction.channel as TextChannel).has('MANAGE_MESSAGES')
+  )
+    return interaction.reply({
+      content: 'I need the `Manage Messages` permission to use this command.',
+      ephemeral: true
+    });
+  else if (
+    !(interaction.member as GuildMember)
+      ?.permissionsIn(interaction.channel as TextChannel)
+      .has('MANAGE_MESSAGES')
+  )
+    return interaction.reply({
+      content: 'You need the `Manage Messages` permission to use this command.',
+      ephemeral: true
+    });
 
-  if (isNaN(amount)) {
-    return await interaction.reply('is that a number?');
-  } else if (amount <= 1 || amount > 100) {
-    return await interaction.reply('you need to input a number between 1 and 99.');
+  const amount = interaction.options.getNumber('amount') as number;
+
+  if (amount <= 1) {
+    return await interaction.reply({
+      content: 'you need to input a number higher than 1.',
+      ephemeral: true
+    });
+  }
+
+  if (amount > 100) {
+    const splitted = new Array(Math.floor(amount / 100)).fill(100).concat(amount % 100);
+    return splitted.forEach((num: number) => {
+      console.log(num);
+      num == 100 ? (num = num - 1) : null;
+      if (num === 0) return;
+      (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(num);
+    });
   }
   return await (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(
     amount
