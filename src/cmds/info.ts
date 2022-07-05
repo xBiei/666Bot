@@ -19,7 +19,7 @@ module.exports.execute = async (
   ) as GuildMember;
   const msg =
     interaction instanceof UserContextMenuInteraction
-      ? false
+      ? true
       : (interaction.options as CommandInteractionOptionResolver).getBoolean('ephemeral', true);
 
   const userEmbed = new MessageEmbed()
