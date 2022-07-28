@@ -1,0 +1,9 @@
+// use jsonc lang to avoid comments error in vscode
+{
+  "token": "duh", // duh
+  "volume": "0.25", // default vol
+  "owner": "333625171468353538", // your id bb
+  "activity": "meow",
+  "activityType": "Listening", // Listening / Watching / Playing
+  "status": "dnd" // dnd / online / idle / invisible
+}
