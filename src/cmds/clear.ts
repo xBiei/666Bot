@@ -1,15 +1,18 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   CommandInteraction,
   GuildMember,
   NewsChannel,
+  SlashCommandBuilder,
   TextChannel,
   ThreadChannel
 } from 'discord.js';
 
 module.exports.execute = async (interaction: CommandInteraction) => {
+  if (!interaction.isChatInputCommand()) return;
   if (
-    !interaction.guild?.me?.permissionsIn(interaction.channel as TextChannel).has('MANAGE_MESSAGES')
+    !interaction.guild?.members.me
+      ?.permissionsIn(interaction.channel as TextChannel)
+      .has('ManageMessages')
   )
     return interaction.reply({
       content: 'I need the `Manage Messages` permission to use this command.',
@@ -18,7 +21,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
   else if (
     !(interaction.member as GuildMember)
       ?.permissionsIn(interaction.channel as TextChannel)
-      .has('MANAGE_MESSAGES')
+      .has('ManageMessages')
   )
     return interaction.reply({
       content: 'You need the `Manage Messages` permission to use this command.',
@@ -42,7 +45,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
       if (num === 0) return;
       (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(num);
     });
-    return interaction.reply({content: 'Done Done.', ephemeral: true})
+    return interaction.reply({ content: 'Done Done.', ephemeral: true });
   }
   return await (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(
     amount

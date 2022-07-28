@@ -1,10 +1,19 @@
 import { readdir } from 'fs';
 import path from 'path';
-import { Client, Collection, Intents, Interaction, Message } from 'discord.js';
-import { ContextMenuCommandBuilder, SlashCommandBuilder } from '@discordjs/builders';
+import {
+  ActivityType,
+  Client,
+  Collection,
+  ContextMenuCommandBuilder,
+  GatewayIntentBits,
+  Interaction,
+  InteractionType,
+  Message,
+  SlashCommandBuilder
+} from 'discord.js';
 import { AudioResource, VoiceConnection } from '@discordjs/voice';
 import { restApi } from './utils/rest';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v9/interactions';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v10/interactions';
 import { QuickDB } from 'quick.db';
 require('dotenv').config();
 const db = new QuickDB();
@@ -41,12 +50,24 @@ export class CustomClient extends Client {
   contextCommands: Collection<String, RESTPostAPIApplicationCommandsJSONBody> = new Collection();
 }
 
+// Logger
+const winston = require('winston');
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  defaultMeta: { service: 'user-service' },
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
 const client = new CustomClient({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_VOICE_STATES,
-    Intents.FLAGS.GUILD_MESSAGES
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildMessages
   ]
 });
 
@@ -57,7 +78,7 @@ let musicQueue: Collection<string, QueueObject> = new Collection();
 
 client.on('ready', async () => {
   console.log("Bot's Up!");
-  client.user?.setActivity(`Luv u`, { type: 'PLAYING' });
+  client.user?.setActivity(`Cigarettes After Sex, K.`, { type: ActivityType.Listening });
 
   await readdir(path.resolve(__dirname, 'cmds'), async (error, files) => {
     if (error) throw error;
@@ -89,7 +110,7 @@ client.on('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
-  if (interaction.isCommand() || interaction.isContextMenu() || interaction.isUserContextMenu()) {
+  if (interaction.type === InteractionType.ApplicationCommand) {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;
     try {

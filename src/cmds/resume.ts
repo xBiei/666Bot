@@ -1,6 +1,5 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { getVoiceConnection } from '@discordjs/voice';
-import { CommandInteraction, GuildMember } from 'discord.js';
+import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 import { QueueObject } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {

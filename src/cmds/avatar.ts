@@ -1,26 +1,22 @@
-import { ContextMenuCommandBuilder, SlashCommandBuilder } from '@discordjs/builders';
 import {
   CommandInteraction,
   CommandInteractionOptionResolver,
-  ContextMenuInteraction,
-  MessageEmbed,
-  User,
-  UserContextMenuInteraction
+  ContextMenuCommandBuilder,
+  EmbedBuilder,
+  SlashCommandBuilder,
+  User
 } from 'discord.js';
 
-module.exports.execute = async (
-  interaction: CommandInteraction | UserContextMenuInteraction | ContextMenuInteraction
-) => {
+module.exports.execute = async (interaction: CommandInteraction) => {
   const user = interaction.options.getUser('user') as User;
-  const msg =
-    interaction instanceof UserContextMenuInteraction
-      ? true
-      : (interaction.options as CommandInteractionOptionResolver).getBoolean('send', true);
+  const msg = interaction.isUserContextMenuCommand()
+    ? true
+    : (interaction.options as CommandInteractionOptionResolver).getBoolean('send', true);
 
-  const userEmbed = new MessageEmbed()
+  const userEmbed = new EmbedBuilder()
     .setColor(13238363)
     .setTimestamp()
-    .setImage(user.avatarURL({ size: 4096, dynamic: true, format: 'png' }) as string)
+    .setImage(user.avatarURL({ size: 4096, extension: 'png' }) as string)
     .setFooter({
       text: `Meow :3`
     });

@@ -1,8 +1,8 @@
-import { codeBlock, SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import { codeBlock, CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { CustomClient } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, client: CustomClient) => {
+  if (!interaction.isChatInputCommand()) return;
   if (interaction.user.id !== process.env.owner)
     return await interaction.reply('You are not the owner!');
 
@@ -32,6 +32,7 @@ module.exports.execute = async (interaction: CommandInteraction, client: CustomC
     await interaction.reply(codeBlock('js', cleaned));
   } catch (err) {
     console.log(err);
+    await interaction.reply(`\`ERROR\` \`\`\`xl\n${clean(client, err)}\n\`\`\``);
   }
 };
 

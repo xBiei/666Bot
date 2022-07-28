@@ -1,10 +1,11 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { getVoiceConnection } from '@discordjs/voice';
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { QueueObject } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
+  if (!interaction.isChatInputCommand()) return;
+
   let connection = getVoiceConnection(interaction.guildId);
   const volume = interaction.options.getNumber('volume');
   if (!volume)

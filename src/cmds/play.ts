@@ -1,4 +1,3 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import {
   createAudioPlayer,
   createAudioResource,
@@ -6,12 +5,19 @@ import {
   getVoiceConnection,
   NoSubscriberBehavior
 } from '@discordjs/voice';
-import { CommandInteraction, GuildMember, InternalDiscordGatewayAdapterCreator } from 'discord.js';
+import {
+  CommandInteraction,
+  GuildMember,
+  InternalDiscordGatewayAdapterCreator,
+  SlashCommandBuilder
+} from 'discord.js';
 import { validate, video_basic_info, stream } from 'play-dl';
 import { QueueObject } from '..';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
+  if (!interaction.isChatInputCommand()) return;
+
   const voiceChannel = (interaction.member as GuildMember).voice.channel;
   let connection = getVoiceConnection(interaction.guildId);
   const player = createAudioPlayer({

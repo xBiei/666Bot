@@ -1,6 +1,5 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { getVoiceConnection } from '@discordjs/voice';
-import { CommandInteraction, GuildMember } from 'discord.js';
+import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 
 module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');

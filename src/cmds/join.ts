@@ -1,6 +1,10 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { joinVoiceChannel } from '@discordjs/voice';
-import { CommandInteraction, GuildMember, InternalDiscordGatewayAdapterCreator } from 'discord.js';
+import {
+  CommandInteraction,
+  GuildMember,
+  InternalDiscordGatewayAdapterCreator,
+  SlashCommandBuilder
+} from 'discord.js';
 
 module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
