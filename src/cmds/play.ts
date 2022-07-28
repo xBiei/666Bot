@@ -12,10 +12,9 @@ import {
   SlashCommandBuilder
 } from 'discord.js';
 import { validate, video_basic_info, stream } from 'play-dl';
-import { QueueObject } from '..';
 import logger from '../utils/logger';
 
-module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
+module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
   if (!interaction.isChatInputCommand()) return;
 

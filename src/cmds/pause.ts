@@ -1,9 +1,8 @@
 import { getVoiceConnection } from '@discordjs/voice';
 import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
-import { QueueObject } from '..';
 import logger from '../utils/logger';
 
-module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
+module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
 
   const voiceChannel = (interaction.member as GuildMember).voice.channel;
