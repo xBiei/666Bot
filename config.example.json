@@ -1,3 +1,4 @@
+// rename to config.json for real usage
 // use jsonc lang to avoid comments error in vscode
 {
   "token": "duh", // duh
