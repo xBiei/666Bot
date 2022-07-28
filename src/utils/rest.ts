@@ -2,7 +2,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import { CustomClient } from '..';
 import logger from './logger';
-import * as config from '../../config.json';
+import * as config from '../config.json';
 
 export const restApi = async (
   client: CustomClient,

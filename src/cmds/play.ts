@@ -13,7 +13,7 @@ import {
 } from 'discord.js';
 import { validate, video_basic_info, stream } from 'play-dl';
 import logger from '../utils/logger';
-import * as config from '../../config.json';
+import * as config from '../config.json';
 
 module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');

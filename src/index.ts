@@ -9,34 +9,22 @@ import {
   Interaction,
   InteractionType,
   Message,
+  PresenceStatusData,
   SlashCommandBuilder
 } from 'discord.js';
-import { AudioResource, VoiceConnection } from '@discordjs/voice';
 import { restApi } from './utils/rest';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v10/interactions';
 import { QuickDB } from 'quick.db';
 import logger from './utils/logger';
+import * as config from './config.json';
+// import editJsonFile from 'edit-json-file';
+// export let file = editJsonFile(`${__dirname}/config.json`);
 
-require('dotenv').config();
 const db = new QuickDB();
-export interface QueueObject {
-  id: string;
-  voice: string;
-  connection?: VoiceConnection;
-  resource?: AudioResource;
-}
 
 interface CommandData {
-  run: (
-    msg?: Message,
-    args?: string[],
-    musicQueue?: Collection<string, QueueObject>,
-    client?: Client
-  ) => Promise<void>;
-  execute: (
-    interaction?: Interaction,
-    musicQueue?: Collection<string, QueueObject>
-  ) => Promise<void>;
+  run: (msg?: Message, args?: string[], client?: Client) => Promise<void>;
+  execute: (interaction?: Interaction, client?: CustomClient) => Promise<void>;
   info: {
     slash?: SlashCommandBuilder;
     context?: ContextMenuCommandBuilder;
@@ -60,15 +48,23 @@ const client = new CustomClient({
     GatewayIntentBits.GuildMessages
   ]
 });
-
 client.commands = new Collection();
 client.slashCommands = new Collection();
 client.contextCommands = new Collection();
-let musicQueue: Collection<string, QueueObject> = new Collection();
+
+let activityType: ActivityType.Playing | ActivityType.Watching | ActivityType.Listening;
+
+if (config.activityType === 'Playing') activityType = ActivityType.Playing;
+else if (config.activityType === 'Watching') activityType = ActivityType.Watching;
+else if (config.activityType === 'Listening') activityType = ActivityType.Listening;
 
 client.on('ready', async () => {
   logger.info("Bot's Up!");
-  client.user?.setActivity(`Cigarettes After Sex, K.`, { type: ActivityType.Listening });
+
+  client.user?.setPresence({
+    status: config.status as PresenceStatusData
+  });
+  client.user?.setActivity(config.activity, { type: activityType });
 
   await readdir(path.resolve(__dirname, 'cmds'), async (error, files) => {
     if (error) throw error;
@@ -104,7 +100,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     const command = client.commands.get(interaction.commandName);
     if (!command) return;
     try {
-      await command.execute(interaction, musicQueue);
+      await command.execute(interaction, client);
       await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
     } catch (error) {
       logger.error(error);
@@ -120,4 +116,4 @@ client.on('debug', (m) => logger.debug(m));
 client.on('warn', (m) => logger.warn(m));
 client.on('error', (m) => logger.error(m));
 
-client.login(process.env.token);
+client.login(config.token);
