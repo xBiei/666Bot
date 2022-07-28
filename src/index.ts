@@ -15,6 +15,8 @@ import { AudioResource, VoiceConnection } from '@discordjs/voice';
 import { restApi } from './utils/rest';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v10/interactions';
 import { QuickDB } from 'quick.db';
+import logger from './utils/logger';
+
 require('dotenv').config();
 const db = new QuickDB();
 export interface QueueObject {
@@ -50,18 +52,6 @@ export class CustomClient extends Client {
   contextCommands: Collection<String, RESTPostAPIApplicationCommandsJSONBody> = new Collection();
 }
 
-// Logger
-const winston = require('winston');
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  defaultMeta: { service: 'user-service' },
-  transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' })
-  ]
-});
-
 const client = new CustomClient({
   intents: [
     GatewayIntentBits.Guilds,
@@ -77,7 +67,7 @@ client.contextCommands = new Collection();
 let musicQueue: Collection<string, QueueObject> = new Collection();
 
 client.on('ready', async () => {
-  console.log("Bot's Up!");
+  logger.info("Bot's Up!");
   client.user?.setActivity(`Cigarettes After Sex, K.`, { type: ActivityType.Listening });
 
   await readdir(path.resolve(__dirname, 'cmds'), async (error, files) => {
@@ -117,17 +107,17 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       await command.execute(interaction, musicQueue);
       await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       await interaction.reply({
         content: 'There was an error while executing this command!',
         ephemeral: true
       });
     }
-  } else console.log(interaction);
+  } else logger.info(interaction);
 });
 
-client.on('error', (err) => {
-  console.log('An Error Has Occured in Client: ' + err);
-});
+client.on('debug', (m) => logger.debug(m));
+client.on('warn', (m) => logger.warn(m));
+client.on('error', (m) => logger.error(m));
 
 client.login(process.env.token);

@@ -13,6 +13,7 @@ import {
 } from 'discord.js';
 import { validate, video_basic_info, stream } from 'play-dl';
 import { QueueObject } from '..';
+import logger from '../utils/logger';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
@@ -57,7 +58,7 @@ module.exports.execute = async (interaction: CommandInteraction, musicQueue: Que
   player.play(resource);
   connection.subscribe(player);
 
-  player.on('error', (err) => console.error(err));
+  player.on('error', (err) => logger.error(err));
 
   return await interaction.reply(`Playing: **[${title}]**`);
 };

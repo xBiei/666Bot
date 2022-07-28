@@ -1,5 +1,6 @@
 import { codeBlock, CommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { CustomClient } from '..';
+import logger from '../utils/logger';
 
 module.exports.execute = async (interaction: CommandInteraction, client: CustomClient) => {
   if (!interaction.isChatInputCommand()) return;
@@ -31,7 +32,7 @@ module.exports.execute = async (interaction: CommandInteraction, client: CustomC
     }
     await interaction.reply(codeBlock('js', cleaned));
   } catch (err) {
-    console.log(err);
+    logger.error(err);
     await interaction.reply(`\`ERROR\` \`\`\`xl\n${clean(client, err)}\n\`\`\``);
   }
 };

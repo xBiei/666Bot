@@ -1,6 +1,7 @@
 import { getVoiceConnection } from '@discordjs/voice';
 import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
 import { QueueObject } from '..';
+import logger from '../utils/logger';
 
 module.exports.execute = async (interaction: CommandInteraction, musicQueue: QueueObject) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
@@ -13,7 +14,7 @@ module.exports.execute = async (interaction: CommandInteraction, musicQueue: Que
 
   if (!connection) return await interaction.reply("I'm not connected to your vc!");
   // @ts-ignore
-  connection._state.subscription.player.pause().catch((err) => console.log(err));
+  connection._state.subscription.player.pause().catch((err) => logger.error(err));
 };
 
 module.exports.info = {

@@ -2,7 +2,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "tsc --project tsconfig.json && node dist/index.js"
+    "start": "tsc --project tsconfig.json && node dist/index.js",
+    "dev": "tsc --project tsconfig.json && node dist/index.js | pino-pretty -i pid,hostname -t 'yyyy-mm-dd HH:MM:ss'"
   },
   "dependencies": {
     "@discordjs/opus": "^0.8.0",
@@ -14,10 +15,10 @@
     "dotenv": "^16.0.1",
     "eslint": "^8.20.0",
     "ffmpeg-static": "^5.0.2",
+    "pino": "7.0.0-rc.9",
     "play-dl": "^1.9.5",
     "quick.db": "^9.0.5",
-    "sodium-native": "^3.3.0",
-    "winston": "^3.8.1"
+    "sodium-native": "^3.3.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.45",
