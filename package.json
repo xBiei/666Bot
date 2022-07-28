@@ -2,8 +2,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "start": "tsc --project tsconfig.json && node dist/index.js",
-    "dev": "tsc --project tsconfig.json && node dist/index.js | pino-pretty -i pid,hostname -t 'yyyy-mm-dd HH:MM:ss'"
+    "start": "tsc --project tsconfig.json && node dist/index.js"
   },
   "dependencies": {
     "@discordjs/opus": "^0.8.0",
