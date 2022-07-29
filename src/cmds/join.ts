@@ -19,7 +19,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     adapterCreator: interaction.channel?.guild
       .voiceAdapterCreator as InternalDiscordGatewayAdapterCreator
   });
-  return await interaction.reply('Coooming.');
+  return await interaction.reply({content:'Coooming.', ephemeral: true});
 };
 
 module.exports.info = {
