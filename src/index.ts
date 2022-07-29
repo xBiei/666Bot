@@ -17,8 +17,6 @@ import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v
 import { QuickDB } from 'quick.db';
 import logger from './utils/logger';
 import * as config from './config.json';
-// import editJsonFile from 'edit-json-file';
-// export let file = editJsonFile(`${__dirname}/config.json`);
 
 const db = new QuickDB();
 
@@ -112,8 +110,14 @@ client.on('interactionCreate', async (interaction: Interaction) => {
   } else logger.info(interaction);
 });
 
-client.on('debug', (m) => logger.debug(m));
-client.on('warn', (m) => logger.warn(m));
-client.on('error', (m) => logger.error(m));
+client.on('debug', (m) => {
+  logger.debug(m);
+});
+client.on('warn', (m) => {
+  logger.warn(m);
+});
+client.on('error', (m) => {
+  logger.error(m);
+});
 
 client.login(config.token);
