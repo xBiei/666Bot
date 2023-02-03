@@ -63,7 +63,8 @@ else if (config.activityType === 'Listening') activityType = ActivityType.Listen
 const tracker = InvitesTracker.init(client, {
   fetchGuilds: true,
   fetchVanity: true,
-  fetchAuditLogs: true
+  fetchAuditLogs: true,
+  activeGuilds: ['913917739079446569', '334000744405663754']
 });
 
 tracker.on('guildMemberAdd', (member, type, invite) => {
