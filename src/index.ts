@@ -97,7 +97,7 @@ tracker.on('guildMemberAdd', (member, type, invite) => {
       },
       {
         name: 'Inviter:',
-        value: type === 'normal' ? `<@${invite?.inviter?.id}>` : `Custom Invite`,
+        value: `<@${invite?.inviter?.id}>`,
         inline: true
       }
     ])
