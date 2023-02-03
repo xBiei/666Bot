@@ -5,18 +5,22 @@ import {
   Client,
   Collection,
   ContextMenuCommandBuilder,
+  EmbedBuilder,
   GatewayIntentBits,
   Interaction,
   InteractionType,
   Message,
   PresenceStatusData,
-  SlashCommandBuilder
+  SlashCommandBuilder,
+  TextChannel,
+  User
 } from 'discord.js';
 import { restApi } from './utils/rest';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/rest/v10/interactions';
 import { QuickDB } from 'quick.db';
 import logger from './utils/logger';
 import * as config from './config.json';
+import InvitesTracker from '@androz2091/discord-invites-tracker';
 
 const db = new QuickDB();
 
@@ -55,6 +59,57 @@ let activityType: ActivityType.Playing | ActivityType.Watching | ActivityType.Li
 if (config.activityType === 'Playing') activityType = ActivityType.Playing;
 else if (config.activityType === 'Watching') activityType = ActivityType.Watching;
 else if (config.activityType === 'Listening') activityType = ActivityType.Listening;
+
+const tracker = InvitesTracker.init(client, {
+  fetchGuilds: true,
+  fetchVanity: true,
+  fetchAuditLogs: true
+});
+
+tracker.on('guildMemberAdd', (member, type, invite) => {
+  console.log('type', type);
+  console.log('invite', invite);
+  console.log('member', member);
+
+  const channel =
+    invite?.guildId === '913917739079446569'
+      ? (client.channels.cache.get('1019742148976984094') as TextChannel)
+      : (client.channels.cache.get('1003222789198712842') as TextChannel);
+
+  const userEmbed = new EmbedBuilder()
+    .setAuthor({
+      name: member.user.username,
+      iconURL: member.user.avatarURL({ size: 4096, extension: 'png' }) as string
+    })
+    .setColor(13238363)
+    .setThumbnail(member.user.avatarURL() as string)
+    .setTimestamp()
+    .addFields([
+      { name: 'Username:', value: `<@${member.user.id}>`, inline: true },
+      { name: '\u200B', value: `\u200B`, inline: true },
+      {
+        name: 'Joined Discord:',
+        value: `${member.user.createdAt.toLocaleString()}\n **<t:${Number(
+          member.user.createdAt.getTime() / 1000
+        ).toFixed(0)}:R>**`,
+        inline: true
+      },
+      {
+        name: 'Inviter:',
+        value: type === 'normal' ? `<@${invite?.inviter?.id}>` : `Custom Invite`,
+        inline: true
+      }
+    ])
+    .setFooter({
+      text: `Made by _xB :3`,
+      iconURL: (client.users.cache.get('333625171468353538') as User).avatarURL({
+        size: 4096,
+        extension: 'png'
+      }) as string
+    });
+
+  return channel.send({ embeds: [userEmbed] });
+});
 
 client.on('ready', async () => {
   logger.info("Bot's Up!");

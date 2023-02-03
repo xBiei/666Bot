@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@androz2091/discord-invites-tracker': ^1.2.3
   '@discordjs/opus': ^0.8.0
   '@discordjs/rest': ^1.0.1
   '@discordjs/voice': ^0.11.0
@@ -19,6 +20,7 @@ specifiers:
   winston-discord-transport: ^1.3.0
 
 dependencies:
+  '@androz2091/discord-invites-tracker': 1.2.3
   '@discordjs/opus': 0.8.0
   '@discordjs/rest': 1.0.1
   '@discordjs/voice': 0.11.0_2bpuud27k56orizxpgp4t3teli
@@ -37,6 +39,10 @@ dependencies:
   winston-discord-transport: 1.3.0
 
 packages:
+
+  /@androz2091/discord-invites-tracker/1.2.3:
+    resolution: {integrity: sha512-V48BHCSLyJo1gCZRsarm9cJ9L2n+qlVn7+OFceEDPGbGqQHgqvk43RRf9hK4BGsWZFBEs9+Km86GcrLb/ER3xQ==}
+    dev: false
 
   /@colors/colors/1.5.0:
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
