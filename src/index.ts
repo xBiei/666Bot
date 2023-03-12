@@ -157,7 +157,18 @@ client.on('interactionCreate', async (interaction: Interaction) => {
       await command.execute(interaction, client);
       await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
     } catch (error) {
-      logger.error(error);
+      logger.log({
+        level: 'error',
+        message: 'An error occurred while executing a command!',
+        meta: {
+          channel: interaction.channelId || 'N/A',
+          guild: interaction.guildId || 'N/A',
+          user: interaction.user.id || 'N/A',
+          command: interaction.commandName || 'N/A',
+          errorMessage: (error as Error).message || 'N/A'
+        },
+        error
+      });
       await interaction.reply({
         content: 'There was an error while executing this command!',
         ephemeral: true
@@ -167,13 +178,33 @@ client.on('interactionCreate', async (interaction: Interaction) => {
 });
 
 client.on('debug', (m) => {
-  logger.debug(m);
+  logger.log({
+    level: 'debug',
+    message: 'A debug message occurred in Client Main process!',
+    meta: {
+      debugMessage: m || 'N/A'
+    }
+  });
 });
 client.on('warn', (m) => {
-  logger.warn(m);
+  logger.log({
+    level: 'warn',
+    message: 'A warning occurred in Client Main process!',
+    meta: {
+      warningMessage: m || 'N/A'
+    }
+  });
 });
+
 client.on('error', (m) => {
-  logger.error(m);
+  logger.log({
+    level: 'error',
+    message: 'An error occurred in Client Main process!',
+    meta: {
+      errorMessage: m.message || 'N/A'
+    },
+    error: m
+  });
 });
 
 client.login(config.token);
