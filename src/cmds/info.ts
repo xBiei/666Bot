@@ -17,7 +17,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     interaction.options.getUser('user')?.id as string
   ) as GuildMember;
   const msg =
-    !(interaction.options as CommandInteractionOptionResolver).getBoolean('ephemeral') || false;
+    !(interaction.options as CommandInteractionOptionResolver).getBoolean('send') || false;
 
   const userEmbed = new EmbedBuilder()
     .setAuthor({
