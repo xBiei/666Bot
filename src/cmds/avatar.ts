@@ -9,9 +9,8 @@ import {
 
 module.exports.execute = async (interaction: CommandInteraction) => {
   const user = interaction.options.getUser('user') as User;
-  const msg = interaction.isUserContextMenuCommand()
-    ? true
-    : (interaction.options as CommandInteractionOptionResolver).getBoolean('send', true);
+  const msg =
+    !(interaction.options as CommandInteractionOptionResolver).getBoolean('send') || false;
 
   const userEmbed = new EmbedBuilder()
     .setColor(13238363)
