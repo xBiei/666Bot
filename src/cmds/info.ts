@@ -12,13 +12,12 @@ import {
 module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return interaction.reply('This is Guild only Command!');
 
-  const user = interaction.options.getUser('user') as User;
+  const user = (await interaction.options.getUser('user')?.fetch()) as User;
   const member = (interaction.guild as Guild).members.cache.get(
     interaction.options.getUser('user')?.id as string
   ) as GuildMember;
-  const msg = interaction.isUserContextMenuCommand()
-    ? true
-    : (interaction.options as CommandInteractionOptionResolver).getBoolean('ephemeral', true);
+  const msg =
+    !(interaction.options as CommandInteractionOptionResolver).getBoolean('ephemeral') || false;
 
   const userEmbed = new EmbedBuilder()
     .setAuthor({
@@ -42,12 +41,17 @@ module.exports.execute = async (interaction: CommandInteraction) => {
       { name: '\u200B', value: `\u200B`, inline: true },
       {
         name: 'Joined Server:',
-        value: `${member.joinedAt?.toLocaleString()}\n **<t:${Number(
-          member.joinedTimestamp! / 1000
-        ).toFixed(0)}:R>**`,
+        value: member
+          ? `${member.joinedAt?.toLocaleString()}\n **<t:${Number(
+              member.joinedTimestamp! / 1000
+            ).toFixed(0)}:R>**`
+          : `User is not in this server!`,
         inline: true
       }
     ])
+    .setImage(
+      user.banner ? `https://cdn.discordapp.com/banners/${user.id}/${user.banner}?size=512` : null
+    )
     .setFooter({
       text: `Requested by ${interaction.member.user.username} :3`,
       iconURL: (interaction.member.user as User).avatarURL({
@@ -69,7 +73,7 @@ module.exports.info = {
     )
     .addBooleanOption((option) =>
       option
-        .setName('ephemeral')
+        .setName('send')
         .setDescription('Do you want to hide this message from the chat?.')
         .setRequired(true)
     ),
