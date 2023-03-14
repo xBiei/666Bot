@@ -11,7 +11,7 @@ import {
   InternalDiscordGatewayAdapterCreator,
   SlashCommandBuilder
 } from 'discord.js';
-import { validate, video_basic_info, stream } from 'play-dl';
+import { validate, video_basic_info, stream, search } from 'play-dl';
 import logger from '../utils/logger';
 import * as config from '../config.json';
 
@@ -26,7 +26,7 @@ module.exports.execute = async (interaction: CommandInteraction) => {
       noSubscriber: NoSubscriberBehavior.Pause
     }
   });
-  const url = interaction.options.getString('url') as string;
+  let url = interaction.options.getString('url') as string;
   const video = await stream(url);
   let info: { title?: string; type: string };
   let title: string | undefined;
@@ -42,8 +42,9 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     });
   }
 
-  if ((await validate(url)) !== 'yt_video') return await interaction.reply('not legit YT url.');
-
+  if ((await validate(url)) !== 'yt_video' || (await validate(url)) !== 'sp_track')
+    return await interaction.reply('not legit YT/SP url.');
+  if ((await validate(url)) !== 'sp_track') await search(url).then((e) => (url = e[0].url));
   await video_basic_info(url).then((e) => {
     info = { title: e.video_details.title, type: e.video_details.type };
     title = e.video_details.title;
