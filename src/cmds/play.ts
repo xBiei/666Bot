@@ -11,13 +11,22 @@ import {
   InternalDiscordGatewayAdapterCreator,
   SlashCommandBuilder
 } from 'discord.js';
-import { validate, video_basic_info, stream, search } from 'play-dl';
+import {
+  validate,
+  video_basic_info,
+  stream,
+  search,
+  spotify,
+  is_expired,
+  refreshToken
+} from 'play-dl';
 import logger from '../utils/logger';
 import * as config from '../config.json';
 
 module.exports.execute = async (interaction: CommandInteraction) => {
   if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
   if (!interaction.isChatInputCommand()) return;
+  if (is_expired()) await refreshToken();
 
   const voiceChannel = (interaction.member as GuildMember).voice.channel;
   let connection = getVoiceConnection(interaction.guildId);
@@ -27,9 +36,9 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     }
   });
   let url = interaction.options.getString('url') as string;
-  const video = await stream(url);
   let info: { title?: string; type: string };
   let title: string | undefined;
+
   if (!voiceChannel)
     return await interaction.reply('You need to be in a channel to execute this command!');
 
@@ -42,14 +51,32 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     });
   }
 
-  if ((await validate(url)) !== 'yt_video' || (await validate(url)) !== 'sp_track')
-    return await interaction.reply('not legit YT/SP url.');
-  if ((await validate(url)) === 'sp_track') await search(url).then((e) => (url = e[0].url));
+  if ((await validate(url)) === 'yt_video') {
+    await video_basic_info(url).then((e) => {
+      info = { title: e.video_details.title, type: e.video_details.type };
+      title = e.video_details.title;
+    });
+  } else if ((await validate(url)) === 'sp_track') {
+    await spotify(url)
+      .then((e) => {
+        info = { title: e.name, type: e.type };
+        title = e.name;
+      })
+      .then(async () => {
+        if (title) await search(title).then((e) => (url = e[0].url));
+        else return await interaction.reply('Could not find the song. Use a YT link instead.');
+      })
+      .then(async () => {
+        if ((await validate(url)) === 'yt_video')
+          await video_basic_info(url).then((e) => {
+            info = { title: e.video_details.title, type: e.video_details.type };
+            title = e.video_details.title;
+          });
+        else return await interaction.reply('Could not find the song. Use a YT link instead.');
+      });
+  } else return await interaction.reply('Could not find the song. Use a YT link instead.');
 
-  await video_basic_info(url).then((e) => {
-    info = { title: e.video_details.title, type: e.video_details.type };
-    title = e.video_details.title;
-  });
+  const video = await stream(url);
 
   var resource = createAudioResource(video.stream, {
     inlineVolume: true,
