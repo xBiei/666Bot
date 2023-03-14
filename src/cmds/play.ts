@@ -44,7 +44,8 @@ module.exports.execute = async (interaction: CommandInteraction) => {
 
   if ((await validate(url)) !== 'yt_video' || (await validate(url)) !== 'sp_track')
     return await interaction.reply('not legit YT/SP url.');
-  if ((await validate(url)) !== 'sp_track') await search(url).then((e) => (url = e[0].url));
+  if ((await validate(url)) === 'sp_track') await search(url).then((e) => (url = e[0].url));
+
   await video_basic_info(url).then((e) => {
     info = { title: e.video_details.title, type: e.video_details.type };
     title = e.video_details.title;
