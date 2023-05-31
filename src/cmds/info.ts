@@ -22,10 +22,10 @@ module.exports.execute = async (interaction: CommandInteraction) => {
   const userEmbed = new EmbedBuilder()
     .setAuthor({
       name: user.username,
-      iconURL: user.avatarURL({ size: 4096, extension: 'png' }) as string
+      iconURL: user.avatarURL({ size: 2048 }) as string
     })
     .setColor(13238363)
-    .setThumbnail(user.avatarURL() as string)
+    .setThumbnail(user.avatarURL({ size: 2048 }) as string)
     .setTimestamp()
     .addFields([
       { name: 'Username:', value: `<@${user.id}>`, inline: true },
@@ -37,8 +37,6 @@ module.exports.execute = async (interaction: CommandInteraction) => {
         ).toFixed(0)}:R>**`,
         inline: true
       },
-      { name: 'ID:', value: `${user.id}`, inline: true },
-      { name: '\u200B', value: `\u200B`, inline: true },
       {
         name: 'Joined Server:',
         value: member
@@ -46,11 +44,11 @@ module.exports.execute = async (interaction: CommandInteraction) => {
               member.joinedTimestamp! / 1000
             ).toFixed(0)}:R>**`
           : `User is not in this server!`,
-        inline: true
+        inline: false
       }
     ])
     .setImage(
-      user.banner ? `https://cdn.discordapp.com/banners/${user.id}/${user.banner}?size=512` : null
+      user.banner ? `https://cdn.discordapp.com/banners/${user.id}/${user.banner}?size=2048` : null
     )
     .setFooter({
       text: `Requested by ${interaction.member.user.username} :3`,
