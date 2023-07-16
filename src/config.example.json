@@ -1,8 +1,11 @@
 {
   "token": "duh",
-  "volume": "0.25",
+  "volume": 25,
   "owner": "333625171468353538",
-  "activity": "meow",
+  "activity": "K, Cigarettes After Sex.",
   "activityType": "Listening",
-  "status": "dnd"
+  "status": "dnd",
+  "pruning": true, // Delete msgs after leave
+  "stayTime": 10, // Stay time after no activity in mins
+  "maxPlaylistSize": 15 // Max playlist size
 }

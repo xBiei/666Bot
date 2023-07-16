@@ -1,17 +1,17 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import { CustomClient } from '..';
 import logger from './logger';
 import * as config from '../config.json';
+import { CustomClient } from '../structs/CustomClient';
 
 export const restApi = async (
-  client: CustomClient,
+  client: CustomClient['client'],
   slash: CustomClient['slashCommands'],
   context: CustomClient['contextCommands']
 ) => {
-  const rest = new REST({ version: '9' }).setToken(config.token as string);
+  const rest = new REST({ version: '9' }).setToken(config.token);
   await rest.put(Routes.applicationCommands(client.user?.id as string), {
-    body: [...context.toJSON(), ...slash.toJSON()]
+    body: [...context, ...slash]
   });
   logger.info('Rest Api Done!');
 };
