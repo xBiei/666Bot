@@ -20,7 +20,6 @@ export interface CommandData {
     slash: SlashCommandBuilder;
     context?: ContextMenuCommandBuilder;
     name: string;
-    group?: string;
     description: string;
     aliases?: string[]; // todo: remove this
     permissions?: string[];

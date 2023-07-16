@@ -1,24 +1,42 @@
-import { getVoiceConnection } from '@discordjs/voice';
-import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
-import logger from '../utils/logger';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { canModifyQueue } from '../structs/MusicQueue';
+import { client } from '../index';
 
-module.exports.execute = async (interaction: CommandInteraction) => {
-  if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
+module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
+  const queue = client.queues.get(interaction.guild!.id);
+  const guildMember = interaction.guild!.members.cache.get(interaction.user.id);
 
-  const voiceChannel = (interaction.member as GuildMember).voice.channel;
-  let connection = getVoiceConnection(interaction.guildId);
+  if (!queue)
+    return interaction
+      .reply({
+        content: 'The Queue is empty, use /play command to add some stuff!',
+        ephemeral: true
+      })
+      .catch(console.error);
 
-  if (!voiceChannel)
-    return await interaction.reply('You need to be in a channel to execute this command!');
+  if (!canModifyQueue(guildMember!))
+    return interaction
+      .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
+      .catch(console.error);
 
-  if (!connection) return await interaction.reply("I'm not connected to your vc!");
-  // @ts-ignore
-  connection._state.subscription.player.pause().catch((err) => logger.error(err));
+  if (queue.player.pause()) {
+    const content = { content: `⏯ Paused by <@${interaction.user.id}>!` };
+
+    if (interaction.replied) interaction.followUp(content).catch(console.error);
+    else interaction.reply(content).catch(console.error);
+
+    return true;
+  }
+  const content = { content: "The player isn't Playing.", ephemeral: true };
+
+  if (interaction.replied) interaction.followUp(content).catch(console.error);
+  else interaction.reply(content).catch(console.error);
+  return false;
 };
 
 module.exports.info = {
   name: 'pause',
   slash: new SlashCommandBuilder().setName('pause').setDescription('Pauses Player.'),
   description: 'Pauses Player.',
-  aliases: ['pp']
+  cooldown: 1
 };

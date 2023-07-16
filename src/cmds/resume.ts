@@ -1,25 +1,45 @@
-import { getVoiceConnection } from '@discordjs/voice';
-import { CommandInteraction, GuildMember, SlashCommandBuilder } from 'discord.js';
-import logger from '../utils/logger';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { client } from '../index';
+import { canModifyQueue } from '../structs/MusicQueue';
 
-module.exports.execute = async (interaction: CommandInteraction) => {
-  if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
+module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
+  const queue = client.queues.get(interaction.guild!.id);
+  const guildMember = interaction.guild!.members.cache.get(interaction.user.id);
 
-  const voiceChannel = (interaction.member as GuildMember).voice.channel;
-  let connection = getVoiceConnection(interaction.guildId);
+  if (!queue)
+    return interaction
+      .reply({
+        content: 'The Queue is empty, use /play command to add some stuff!',
+        ephemeral: true
+      })
+      .catch(console.error);
 
-  if (!voiceChannel)
-    return await interaction.reply('You need to be in a channel to execute this command!');
+  if (!canModifyQueue(guildMember!))
+    return interaction
+      .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
+      .catch(console.error);
 
-  if (!connection) return await interaction.reply("I'm not connected to your vc!");
-  // @ts-ignore
-  connection._state.subscription.player.unpause().catch((err) => logger.error(err));
+  if (queue.player.unpause()) {
+    const content = {
+      content: `⏯ Resumed by <@${interaction.user.id}>!`
+    };
+
+    if (interaction.replied) interaction.followUp(content).catch(console.error);
+    else interaction.reply(content).catch(console.error);
+
+    return true;
+  }
+
+  const content = { content: "The player isn't Paused", ephemeral: true };
+
+  if (interaction.replied) interaction.followUp(content).catch(console.error);
+  else interaction.reply(content).catch(console.error);
+  return false;
 };
 
 module.exports.info = {
   name: 'resume',
   slash: new SlashCommandBuilder().setName('resume').setDescription('Resumes Player.'),
-  group: 'voice',
   description: 'Resumes Player.',
-  aliases: ['rp', 'unpause', 'up', 'r']
+  cooldown: 1
 };

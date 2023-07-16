@@ -1,95 +1,112 @@
+import { DiscordGatewayAdapterCreator, joinVoiceChannel } from '@discordjs/voice';
 import {
-  createAudioPlayer,
-  createAudioResource,
-  joinVoiceChannel,
-  getVoiceConnection,
-  NoSubscriberBehavior
-} from '@discordjs/voice';
-import {
-  CommandInteraction,
-  GuildMember,
-  InternalDiscordGatewayAdapterCreator,
-  SlashCommandBuilder
+  ChatInputCommandInteraction,
+  PermissionsBitField,
+  SlashCommandBuilder,
+  TextChannel
 } from 'discord.js';
-import {
-  validate,
-  video_basic_info,
-  stream,
-  search,
-  spotify,
-  is_expired,
-  refreshToken
-} from 'play-dl';
+import { client } from '../index';
+import { MusicQueue } from '../structs/MusicQueue';
+import { Song } from '../structs/Song';
 import logger from '../utils/logger';
-import * as config from '../config.json';
+import { validate } from 'play-dl';
 
-module.exports.execute = async (interaction: CommandInteraction) => {
-  if (!interaction.inGuild()) return await interaction.reply('This is Guild only Command!');
-  if (!interaction.isChatInputCommand()) return;
-  if (is_expired()) await refreshToken();
+module.exports.execute = async (interaction: ChatInputCommandInteraction, input: string) => {
+  let songArg = interaction.options.getString('query');
+  if (!songArg) songArg = input;
 
-  const voiceChannel = (interaction.member as GuildMember).voice.channel;
-  let connection = getVoiceConnection(interaction.guildId);
-  const player = createAudioPlayer({
-    behaviors: {
-      noSubscriber: NoSubscriberBehavior.Pause
-    }
-  });
-  let url = interaction.options.getString('url') as string;
-  let info: { title?: string; type: string };
-  let title: string | undefined;
+  const guildMember = interaction.guild!.members.cache.get(interaction.user.id);
+  const { channel } = guildMember!.voice;
 
-  if (!voiceChannel)
-    return await interaction.reply('You need to be in a channel to execute this command!');
+  if (!channel)
+    return interaction
+      .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
+      .catch(console.error);
 
-  if (!connection) {
-    connection = joinVoiceChannel({
-      channelId: voiceChannel.id,
-      guildId: voiceChannel.guild.id,
-      adapterCreator: interaction.channel?.guild
-        .voiceAdapterCreator as InternalDiscordGatewayAdapterCreator
-    });
+  const queue = client.queues.get(interaction.guild!.id);
+
+  if (queue && channel.id !== queue.connection.joinConfig.channelId)
+    return interaction
+      .reply({
+        content: "You're not in the channel, Troller!",
+        ephemeral: true
+      })
+      .catch(console.error);
+
+  if (!songArg)
+    return interaction
+      .reply({
+        content: 'You gotta use a YT/Spotify/Soundcloud URL or a text to search',
+        ephemeral: true
+      })
+      .catch(console.error);
+
+  const url = songArg;
+
+  if (interaction.replied) await interaction.editReply('⏳ Loading...').catch(console.error);
+  else await interaction.reply('⏳ Loading...');
+
+  // Start the playlist if playlist url was provided
+  if ((await validate(url)) === 'yt_playlist') {
+    await interaction.editReply('🔗 Link is playlist').catch(console.error);
+
+    return client.slashCommandsMap.get('playlist')!.execute(interaction);
   }
 
-  if ((await validate(url)) === 'yt_video') {
-    await video_basic_info(url).then((e) => {
-      info = { title: e.video_details.title, type: e.video_details.type };
-      title = e.video_details.title;
-    });
-  } else if ((await validate(url)) === 'sp_track') {
-    await spotify(url)
-      .then((e) => {
-        info = { title: e.name, type: e.type };
-        title = e.name;
-      })
-      .then(async () => {
-        if (title) await search(title).then((e) => (url = e[0].url));
-        else return await interaction.reply('Could not find the song. Use a YT link instead.');
-      })
-      .then(async () => {
-        if ((await validate(url)) === 'yt_video')
-          await video_basic_info(url).then((e) => {
-            info = { title: e.video_details.title, type: e.video_details.type };
-            title = e.video_details.title;
-          });
-        else return await interaction.reply('Could not find the song. Use a YT link instead.');
-      });
-  } else return await interaction.reply('Could not find the song. Use a YT link instead.');
+  let song;
 
-  const video = await stream(url);
+  try {
+    song = await Song.from(url, url);
+  } catch (error: any) {
+    if (error.name == 'NoResults')
+      return interaction
+        .reply({ content: `No Video found for this url <${url}>`, ephemeral: true })
+        .catch(console.error);
+    if (error.name == 'InvalidURL')
+      return interaction
+        .reply({ content: `Smth wrong with this url <${url}>`, ephemeral: true })
+        .catch(console.error);
 
-  var resource = createAudioResource(video.stream, {
-    inlineVolume: true,
-    inputType: video.type
+    console.error(error);
+    if (interaction.replied)
+      return await interaction
+        .editReply({
+          content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`
+        })
+        .catch((err) => logger.error(err));
+    else
+      return interaction
+        .reply({
+          content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`,
+          ephemeral: true
+        })
+        .catch((err) => logger.error(err));
+  }
+
+  if (queue) {
+    queue.enqueue(song);
+
+    return (interaction.channel as TextChannel)
+      .send({
+        content: `✅ **${song.title}** has been added to the queue by <@${interaction.user.id}>`
+      })
+      .catch(console.error);
+  }
+
+  const newQueue = new MusicQueue({
+    interaction,
+    textChannel: interaction.channel! as TextChannel,
+    connection: joinVoiceChannel({
+      channelId: channel.id,
+      guildId: channel.guild.id,
+      adapterCreator: channel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator
+    })
   });
 
-  resource.volume?.setVolume(Number(config.volume));
-  player.play(resource);
-  connection.subscribe(player);
+  client.queues.set(interaction.guild!.id, newQueue);
 
-  player.on('error', (err) => logger.error(err));
-
-  return await interaction.reply(`Playing: **[${title}]**`);
+  newQueue.enqueue(song);
+  interaction.deleteReply().catch(console.error);
 };
 
 module.exports.info = {
@@ -98,9 +115,13 @@ module.exports.info = {
     .setName('play')
     .setDescription('Plays music from a link.')
     .addStringOption((option) =>
-      option.setName('url').setDescription('music URL from YT').setRequired(true)
+      option.setName('query').setDescription('The link/text you want to play').setRequired(true)
     ),
-  group: 'voice',
-  description: 'Plays music from a link.',
-  aliases: ['p', 'song', 'start']
+  cooldown: 3,
+  permissions: [
+    PermissionsBitField.Flags.Connect,
+    PermissionsBitField.Flags.Speak,
+    PermissionsBitField.Flags.AddReactions,
+    PermissionsBitField.Flags.ManageMessages
+  ]
 };
