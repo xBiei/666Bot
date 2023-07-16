@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
+import { canModifyQueue } from '../structs/MusicQueue';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   const queue = client.queues.get(interaction.guild!.id);
@@ -20,12 +20,15 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
       .catch(console.error);
 
   queue.stop();
+
+  interaction.reply({ content: `⏯ Stopped by <@${interaction.user.id}>!` }).catch(console.error);
 };
 
 module.exports.info = {
-  name: 'leave',
+  name: 'stop',
   slash: new SlashCommandBuilder()
-    .setName('leave')
-    .setDescription('Leave the current voice channel!'),
-  description: 'Leave the current voice channel!'
+    .setName('stop')
+    .setDescription('Stops the player and clear the queue.'),
+  description: 'Stops the player and clear the queue.',
+  cooldown: 1
 };

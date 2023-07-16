@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
+import { canModifyQueue } from '../structs/MusicQueue';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   const queue = client.queues.get(interaction.guild!.id);
@@ -19,13 +19,14 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
       .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
       .catch(console.error);
 
-  queue.stop();
+  queue.player.stop(true);
+
+  interaction.reply({ content: `⏭️ Skipped by <@${interaction.user.id}>!` }).catch(console.error);
 };
 
 module.exports.info = {
-  name: 'leave',
-  slash: new SlashCommandBuilder()
-    .setName('leave')
-    .setDescription('Leave the current voice channel!'),
-  description: 'Leave the current voice channel!'
+  name: 'skip',
+  slash: new SlashCommandBuilder().setName('skip').setDescription('Skips the current song.'),
+  description: 'Skips the current song.',
+  cooldown: 1
 };

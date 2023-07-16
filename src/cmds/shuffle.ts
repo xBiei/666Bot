@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
 
-module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
+module.exports.execute = (interaction: ChatInputCommandInteraction) => {
   const queue = client.queues.get(interaction.guild!.id);
   const guildMember = interaction.guild!.members.cache.get(interaction.user.id);
 
@@ -19,13 +19,24 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
       .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
       .catch(console.error);
 
-  queue.stop();
+  let songs = queue.songs;
+
+  for (let i = songs.length - 1; i > 1; i--) {
+    let j = 1 + Math.floor(Math.random() * i);
+    [songs[i], songs[j]] = [songs[j], songs[i]];
+  }
+
+  queue.songs = songs;
+
+  const content = { content: `🔀 Queue is shuffled by <@${interaction.user.id}>!` };
+
+  if (interaction.replied) interaction.followUp(content).catch(console.error);
+  else interaction.reply(content).catch(console.error);
 };
 
 module.exports.info = {
-  name: 'leave',
-  slash: new SlashCommandBuilder()
-    .setName('leave')
-    .setDescription('Leave the current voice channel!'),
-  description: 'Leave the current voice channel!'
+  name: 'shuffle',
+  slash: new SlashCommandBuilder().setName('shuffle').setDescription('shuffles the Queue.'),
+  description: 'shuffles the Queue.',
+  cooldown: 1
 };
