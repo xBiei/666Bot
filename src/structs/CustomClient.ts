@@ -15,7 +15,7 @@ import path from 'path';
 import { CommandData } from '../index';
 import { MissingPermissionsException, checkPermissions, PermissionResult } from '../utils/perms';
 import * as config from '../config.json';
-import { MusicQueue } from './Queue';
+import { MusicQueue } from './MusicQueue';
 import { restApi } from '../utils/rest';
 import { QuickDB } from 'quick.db';
 import logger from '../utils/logger';
