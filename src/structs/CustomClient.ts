@@ -19,6 +19,7 @@ import { MusicQueue } from './MusicQueue';
 import { restApi } from '../utils/rest';
 import { QuickDB } from 'quick.db';
 import logger from '../utils/logger';
+import { readFile, writeFile } from 'fs';
 
 const db = new QuickDB();
 
@@ -30,7 +31,6 @@ export class CustomClient {
   public contextCommandsMap = new Collection<String, CommandData>();
   public cooldowns = new Collection<string, Collection<Snowflake, number>>();
   public queues = new Collection<Snowflake, MusicQueue>();
-  public activityType!: ActivityType.Playing | ActivityType.Watching | ActivityType.Listening;
 
   public constructor(public readonly client: Client) {
     this.client.login(config.token);
@@ -45,16 +45,52 @@ export class CustomClient {
     this.onError();
     this.onWarn();
 
-    if (config.activityType === 'Playing') this.activityType = ActivityType.Playing;
-    else if (config.activityType === 'Watching') this.activityType = ActivityType.Watching;
-    else if (config.activityType === 'Listening') this.activityType = ActivityType.Listening;
-
     this.client.user?.setPresence({
       status: config.status as PresenceStatusData
     });
-    this.client.user?.setActivity(config.activity, { type: this.activityType });
+    this.client.user?.setActivity(config.activity, { type: config.activityType });
 
     this.onInteractionCreate();
+  }
+
+  public async statusChange(
+    status: PresenceStatusData,
+    activity: string,
+    type: ActivityType.Playing | ActivityType.Watching | ActivityType.Listening
+  ) {
+    this.client.user?.setPresence({
+      status: status
+    });
+    this.client.user?.setActivity(activity, { type: Number(type) });
+    readFile(`${__dirname}/../../src/config.json`, 'utf8', function readFileCallback(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        let obj = JSON.parse(data);
+        obj.status = status;
+        obj.activity = activity;
+        obj.activityType = Number(type);
+
+        writeFile(`${__dirname}/../../src/config.json`, JSON.stringify(obj), 'utf8', (err) =>
+          logger.error(err)
+        );
+      }
+    });
+    // for dist
+    readFile(`${__dirname}/../config.json`, 'utf8', function readFileCallback(err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        let obj = JSON.parse(data);
+        obj.status = status;
+        obj.activity = activity;
+        obj.activityType = Number(type);
+
+        writeFile(`${__dirname}/../config.json`, JSON.stringify(obj), 'utf8', (err) =>
+          logger.error(err)
+        );
+      }
+    });
   }
 
   private async registerSlashCommands() {
@@ -155,6 +191,7 @@ export class CustomClient {
       }
     });
   }
+
   private async onDebug() {
     this.client.on(Events.Debug, async (msg): Promise<any> => {
       logger.log({
@@ -166,6 +203,7 @@ export class CustomClient {
       });
     });
   }
+
   private async onWarn() {
     this.client.on(Events.Warn, async (msg): Promise<any> => {
       logger.log({
@@ -177,6 +215,7 @@ export class CustomClient {
       });
     });
   }
+
   private async onError() {
     this.client.on(Events.Error, async (msg): Promise<any> => {
       logger.log({

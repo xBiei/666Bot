@@ -3,7 +3,7 @@
   "volume": 25,
   "owner": "333625171468353538",
   "activity": "K, Cigarettes After Sex.",
-  "activityType": "Listening",
+  "activityType": 2, // 0 = Playing, 1 = Streaming, 2 = Listening, 3 = Watching
   "status": "dnd",
   "pruning": true, // Delete msgs after leave
   "stayTime": 10, // Stay time after no activity in mins
