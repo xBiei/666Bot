@@ -1,31 +1,24 @@
 import {
-  CommandInteraction,
-  CommandInteractionOptionResolver,
-  ContextMenuCommandBuilder,
   GuildMember,
   EmbedBuilder,
   SlashCommandBuilder,
-  User,
-  Guild
+  ChatInputCommandInteraction
 } from 'discord.js';
 
-module.exports.execute = async (interaction: CommandInteraction) => {
+module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (!interaction.inGuild()) return interaction.reply('This is Guild only Command!');
 
-  const user = (await interaction.options.getUser('user')?.fetch()) as User;
-  const member = (interaction.guild as Guild).members.cache.get(
-    interaction.options.getUser('user')?.id as string
-  ) as GuildMember;
-  const msg =
-    !(interaction.options as CommandInteractionOptionResolver).getBoolean('send') || false;
+  const user = interaction.options.getUser('user', true);
+  const member = interaction.options.getMember('user') as GuildMember;
+  const msg = !interaction.options.getBoolean('send', true);
 
   const userEmbed = new EmbedBuilder()
     .setAuthor({
       name: user.username,
-      iconURL: user.avatarURL({ size: 2048 }) as string
+      iconURL: user.displayAvatarURL({ size: 2048 })
     })
     .setColor(13238363)
-    .setThumbnail(user.avatarURL({ size: 2048 }) as string)
+    .setThumbnail(member.displayAvatarURL({ size: 2048 }))
     .setTimestamp()
     .addFields([
       { name: 'Username:', value: `<@${user.id}>`, inline: true },
@@ -52,10 +45,10 @@ module.exports.execute = async (interaction: CommandInteraction) => {
     )
     .setFooter({
       text: `Requested by ${interaction.member.user.username} :3`,
-      iconURL: (interaction.member.user as User).avatarURL({
+      iconURL: user.displayAvatarURL({
         size: 4096,
         extension: 'png'
-      }) as string
+      })
     });
 
   return await interaction.reply({ embeds: [userEmbed], ephemeral: msg });
@@ -70,12 +63,7 @@ module.exports.info = {
       option.setName('user').setDescription('The user to get info about.').setRequired(true)
     )
     .addBooleanOption((option) =>
-      option
-        .setName('send')
-        .setDescription('Do you want to hide this message from the chat?.')
-        .setRequired(true)
+      option.setName('send').setDescription('Do you want to send this message?.').setRequired(true)
     ),
-  context: new ContextMenuCommandBuilder().setName('Get Info').setType(2),
-  description: 'Get info about the given user!',
-  aliases: ['user', 'Get Info']
+  description: 'Get info about the given user!'
 };

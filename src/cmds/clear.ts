@@ -1,5 +1,5 @@
 import {
-  CommandInteraction,
+  ChatInputCommandInteraction,
   GuildMember,
   NewsChannel,
   SlashCommandBuilder,
@@ -8,8 +8,7 @@ import {
 } from 'discord.js';
 import logger from '../utils/logger';
 
-module.exports.execute = async (interaction: CommandInteraction) => {
-  if (!interaction.isChatInputCommand()) return;
+module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (
     !interaction.guild?.members.me
       ?.permissionsIn(interaction.channel as TextChannel)
@@ -61,6 +60,5 @@ module.exports.info = {
     .addNumberOption((option) =>
       option.setName('amount').setDescription('The amount of messages to delete.').setRequired(true)
     ),
-  description: 'Clears the given number of messages.',
-  aliases: ['delete']
+  description: 'Clears the given number of messages.'
 };

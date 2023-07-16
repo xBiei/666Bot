@@ -1,26 +1,23 @@
 import {
-  CommandInteraction,
-  CommandInteractionOptionResolver,
-  ContextMenuCommandBuilder,
+  ChatInputCommandInteraction,
   EmbedBuilder,
   GuildMember,
-  SlashCommandBuilder,
-  User
+  SlashCommandBuilder
 } from 'discord.js';
 
-module.exports.execute = async (interaction: CommandInteraction) => {
-  const user = interaction.options.getUser('user') as User;
+module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
+  const user = interaction.options.getUser('user', true);
   const member = interaction.options.getMember('user') as GuildMember;
-  const msg =
-    !(interaction.options as CommandInteractionOptionResolver).getBoolean('send') || false;
+  const server = interaction.options.getBoolean('server', true);
+  const msg = !interaction.options.getBoolean('send', true);
 
   const userEmbed = new EmbedBuilder()
     .setColor(13238363)
     .setTimestamp()
     .setImage(
-      interaction.options.get('server')
-        ? member.avatarURL({ size: 2048 }) || user.avatarURL({ size: 2048 })
-        : (user.avatarURL({ size: 2048 }) as string)
+      server
+        ? member.displayAvatarURL({ size: 2048 })
+        : (user.displayAvatarURL({ size: 2048 }) as string)
     )
     .setFooter({
       text: `Meow :3`
@@ -46,7 +43,5 @@ module.exports.info = {
         .setDescription('Do you want to send this message to the chat?.')
         .setRequired(true)
     ),
-  context: new ContextMenuCommandBuilder().setName('Get Avatar').setType(2),
-  description: "Get User's Avatar!",
-  aliases: ['av', 'Get Avatar']
+  description: "Get User's Avatar!"
 };
