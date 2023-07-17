@@ -6,7 +6,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
 
   let helpEmbed = new EmbedBuilder()
     .setTitle('Commands List')
-    .setDescription(`a List of all the commands available.`)
+    .setDescription(`a List of all the available commands.`)
     .setColor('#f0e9e9');
 
   commands.forEach((cmd) => {

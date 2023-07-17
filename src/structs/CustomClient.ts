@@ -37,6 +37,7 @@ export class CustomClient {
 
     this.client.on('ready', () => {
       console.log(`${this.client.user!.username} ready!`);
+      logger.info(`${this.client.user!.username} ready!`);
 
       this.registerSlashCommands();
     });
@@ -94,12 +95,13 @@ export class CustomClient {
   }
 
   private async registerSlashCommands() {
-    await readdir(path.resolve(__dirname, 'cmds'), async (error, files) => {
+    const cmds = path.resolve(__dirname, '..', 'cmds');
+    await readdir(cmds, async (error, files) => {
       if (error) throw error;
       await files.forEach((file) => {
         if (!file.endsWith('.js')) return;
 
-        const properties: CommandData = require(`${path.resolve(__dirname, 'cmds')}/${file}`);
+        const properties: CommandData = require(`${cmds}/${file}`);
 
         // if (properties.info.context) {
         //   this.contextCommandsMap.set(properties.info.name, properties);

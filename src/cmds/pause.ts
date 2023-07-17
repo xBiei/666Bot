@@ -22,15 +22,31 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (queue.player.pause()) {
     const content = { content: `⏯ Paused by <@${interaction.user.id}>!` };
 
-    if (interaction.replied) interaction.followUp(content).catch(console.error);
-    else interaction.reply(content).catch(console.error);
+    if (interaction.replied)
+      interaction
+        .followUp(content)
+        .catch(console.error)
+        .then((msg) => setTimeout(() => msg!.delete(), 5000));
+    else
+      interaction
+        .reply(content)
+        .catch(console.error)
+        .then((msg) => setTimeout(() => msg!.delete(), 5000));
 
     return true;
   }
   const content = { content: "The player isn't Playing.", ephemeral: true };
 
-  if (interaction.replied) interaction.followUp(content).catch(console.error);
-  else interaction.reply(content).catch(console.error);
+  if (interaction.replied)
+    interaction
+      .followUp(content)
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg!.delete(), 5000));
+  else
+    interaction
+      .reply(content)
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg!.delete(), 5000));
   return false;
 };
 

@@ -16,7 +16,6 @@ export interface CommandData {
     context?: ContextMenuCommandBuilder;
     name: string;
     description: string;
-    aliases?: string[]; // todo: remove this
     permissions?: string[];
     cooldown?: number;
   };
@@ -26,9 +25,11 @@ export const client = new CustomClient(
   new Client({
     intents: [
       GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMembers,
       GatewayIntentBits.GuildVoiceStates,
-      GatewayIntentBits.GuildMessages
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.GuildMessageReactions,
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.DirectMessages
     ]
   })
 );

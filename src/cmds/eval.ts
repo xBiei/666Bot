@@ -1,9 +1,9 @@
 import { codeBlock, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import logger from '../utils/logger';
 import * as config from '../config.json';
+import { client } from '../index';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
-  if (!interaction.isChatInputCommand()) return;
   if (interaction.user.id !== config.owner)
     return await interaction.reply('You are not the owner!');
 
@@ -19,7 +19,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     return text;
   };
 
-  const code = interaction.options.getString('code') as string;
+  const code = interaction.options.getString('code', true);
 
   try {
     const evaled = eval(code);

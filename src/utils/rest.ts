@@ -1,6 +1,5 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import logger from './logger';
 import * as config from '../config.json';
 import { CustomClient } from '../structs/CustomClient';
 
@@ -13,5 +12,4 @@ export const restApi = async (
   await rest.put(Routes.applicationCommands(client.user?.id as string), {
     body: [...context, ...slash]
   });
-  logger.info('Rest Api Done!');
 };

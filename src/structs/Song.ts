@@ -1,11 +1,13 @@
-import { AudioResource, createAudioResource, StreamType } from '@discordjs/voice';
+import { AudioResource, createAudioResource } from '@discordjs/voice';
 import {
   validate,
   stream,
   video_basic_info,
   spotify,
   search as ytSearch,
-  soundcloud
+  soundcloud,
+  YouTubeStream,
+  SoundCloudStream
 } from 'play-dl';
 
 export interface SongData {
@@ -119,19 +121,15 @@ export class Song {
   }
 
   public async makeResource(): Promise<AudioResource<Song> | void> {
-    let playStream;
+    let playStream: YouTubeStream | SoundCloudStream | undefined;
 
-    let type = this.url.includes('youtube.com') ? StreamType.Opus : StreamType.OggOpus;
-
-    const source = this.url.includes('youtube') ? 'youtube' : 'soundcloud';
-
-    if (source === 'youtube') {
+    if ((await validate(this.url)) === ('yt_video' || 'so_track')) {
       playStream = await stream(this.url);
     }
 
-    if (!stream) return;
+    if (!playStream) return;
 
-    return createAudioResource(playStream!.stream, {
+    return createAudioResource(playStream.stream, {
       metadata: this,
       inputType: playStream!.type,
       inlineVolume: true
@@ -139,6 +137,6 @@ export class Song {
   }
 
   public startMessage() {
-    return `🔴 Playing ${this.title}`;
+    return `🔴 Playing **${this.title}**`;
   }
 }

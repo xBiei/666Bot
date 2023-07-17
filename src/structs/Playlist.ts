@@ -29,9 +29,7 @@ export class Playlist {
     let playlistVideos: YouTubeVideo[];
 
     if (urlValid === 'yt_playlist') {
-      playlistVideos = await (
-        await search(url, { source: { youtube: 'playlist' } })
-      )[0].all_videos();
+      playlistVideos = await (await playlist_info(url)).all_videos();
     } else {
       const result = await search(searchString, { source: { youtube: 'playlist' } });
 

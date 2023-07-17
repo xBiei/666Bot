@@ -260,7 +260,7 @@ export class MusicQueue {
           if (this.muted) {
             this.resource.volume?.setVolumeLogarithmic(0);
             this.textChannel
-              .send(`I'm muted! By ${user.username}`)
+              .send(`I'm muted! By <@${user.id}>`)
               .catch(console.error)
               .then((msg) => setTimeout(() => msg!.delete(), 5000));
           } else {
@@ -281,7 +281,7 @@ export class MusicQueue {
           this.volume = Math.max(this.volume - 10, 0);
           this.resource.volume?.setVolumeLogarithmic(this.volume / 100);
           this.textChannel
-            .send(`Volume Decreased to ${this.volume}! By ${user.username}`)
+            .send(`Volume Decreased to ${this.volume}! By <@${user.id}>`)
             .catch(console.error)
             .then((msg) => setTimeout(() => msg!.delete(), 5000));
           break;
@@ -293,7 +293,7 @@ export class MusicQueue {
           this.volume = Math.min(this.volume + 10, 100);
           this.resource.volume?.setVolumeLogarithmic(this.volume / 100);
           this.textChannel
-            .send(`Volume Increased to ${this.volume}! By ${user.username}`)
+            .send(`Volume Increased to ${this.volume}! By <@${user.id}>`)
             .catch(console.error)
             .then((msg) => setTimeout(() => msg!.delete(), 5000));
           break;
@@ -321,8 +321,6 @@ export class MusicQueue {
     });
 
     collector.on('end', () => {
-      playingMessage.reactions.removeAll().catch(console.error);
-
       if (config.pruning) {
         setTimeout(() => {
           playingMessage.delete().catch();
