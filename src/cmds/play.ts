@@ -43,8 +43,17 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
 
   const url = songArg;
 
-  if (interaction.replied) await interaction.editReply('⏳ Loading...').catch(console.error);
-  else await interaction.reply('⏳ Loading...');
+  if (interaction.replied)
+    await interaction
+      .editReply('⏳ Loading...')
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch(console.error);
+  else
+    await interaction
+      .reply('⏳ Loading...')
+      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch(console.error);
 
   // Start the playlist if playlist url was provided
   if ((await validate(url)) === 'yt_playlist') {
@@ -73,14 +82,18 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
         .editReply({
           content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`
         })
-        .catch((err) => logger.error(err));
+        .catch(console.error)
+        .then((msg) => setTimeout(() => msg?.delete(), 5000))
+        .catch(console.error);
     else
       return interaction
         .reply({
           content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`,
           ephemeral: true
         })
-        .catch((err) => logger.error(err));
+        .catch(console.error)
+        .then((msg) => setTimeout(() => msg?.delete(), 5000))
+        .catch(console.error);
   }
 
   if (queue) {
