@@ -122,6 +122,7 @@ module.exports.info = {
     PermissionsBitField.Flags.Connect,
     PermissionsBitField.Flags.Speak,
     PermissionsBitField.Flags.AddReactions,
-    PermissionsBitField.Flags.ManageMessages
+    PermissionsBitField.Flags.ManageMessages,
+    PermissionsBitField.Flags.SendMessages
   ]
 };

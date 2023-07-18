@@ -2,6 +2,7 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   GuildMember,
+  PermissionsBitField,
   SlashCommandBuilder
 } from 'discord.js';
 
@@ -43,5 +44,6 @@ module.exports.info = {
         .setDescription('Do you want to send this message to the chat?.')
         .setRequired(true)
     ),
-  description: "Get User's Avatar!"
+  description: "Get User's Avatar!",
+  permissions: [PermissionsBitField.Flags.EmbedLinks, PermissionsBitField.Flags.SendMessages]
 };

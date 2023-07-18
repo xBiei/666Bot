@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+  SlashCommandBuilder
+} from 'discord.js';
 import { client } from '../index';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
@@ -26,5 +31,6 @@ module.exports.info = {
   name: 'help',
   slash: new SlashCommandBuilder().setName('help').setDescription('Sends the help embed.'),
   description: 'Sends the help embed.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.EmbedLinks, PermissionsBitField.Flags.SendMessages]
 };

@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
 
@@ -38,5 +38,7 @@ module.exports.info = {
   slash: new SlashCommandBuilder()
     .setName('leave')
     .setDescription('Leave the current voice channel!'),
-  description: 'Leave the current voice channel!'
+  description: 'Leave the current voice channel!',
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

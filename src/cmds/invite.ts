@@ -4,6 +4,7 @@ import {
   ButtonStyle,
   ChatInputCommandInteraction,
   EmbedBuilder,
+  PermissionsBitField,
   SlashCommandBuilder
 } from 'discord.js';
 
@@ -30,5 +31,6 @@ module.exports.info = {
   name: 'invite',
   slash: new SlashCommandBuilder().setName('invite').setDescription('Sends invite link.'),
   description: 'Sends invite link.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.EmbedLinks, PermissionsBitField.Flags.SendMessages]
 };

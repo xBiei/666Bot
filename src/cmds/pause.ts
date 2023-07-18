@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
 
@@ -54,5 +54,6 @@ module.exports.info = {
   name: 'pause',
   slash: new SlashCommandBuilder().setName('pause').setDescription('Pauses Player.'),
   description: 'Pauses Player.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

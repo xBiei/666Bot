@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { client } from '../index';
 import { canModifyQueue } from '../structs/MusicQueue';
 
@@ -59,5 +59,6 @@ module.exports.info = {
         .setRequired(true)
     ),
   description: 'Skips to a song in the queue.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

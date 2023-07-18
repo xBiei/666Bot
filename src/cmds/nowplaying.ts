@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import {
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  PermissionsBitField,
+  SlashCommandBuilder
+} from 'discord.js';
 import { splitBar } from 'string-progressbar';
 import { client } from '../index';
 
@@ -52,5 +57,6 @@ module.exports.info = {
     .setName('nowplaying')
     .setDescription('Sends the status of the current player.'),
   description: 'Sends the status of the current player.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.EmbedLinks, PermissionsBitField.Flags.SendMessages]
 };

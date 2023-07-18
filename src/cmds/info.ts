@@ -2,7 +2,8 @@ import {
   GuildMember,
   EmbedBuilder,
   SlashCommandBuilder,
-  ChatInputCommandInteraction
+  ChatInputCommandInteraction,
+  PermissionsBitField
 } from 'discord.js';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
@@ -65,5 +66,6 @@ module.exports.info = {
     .addBooleanOption((option) =>
       option.setName('send').setDescription('Do you want to send this message?.').setRequired(true)
     ),
-  description: 'Get info about the given user!'
+  description: 'Get info about the given user!',
+  permissions: [PermissionsBitField.Flags.EmbedLinks, PermissionsBitField.Flags.SendMessages]
 };

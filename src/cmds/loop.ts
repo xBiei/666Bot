@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
 
@@ -33,5 +33,6 @@ module.exports.info = {
   name: 'loop',
   slash: new SlashCommandBuilder().setName('loop').setDescription('Loops the Queue.'),
   description: 'Loops the Queue.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

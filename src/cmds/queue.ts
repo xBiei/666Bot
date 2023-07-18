@@ -107,6 +107,6 @@ module.exports.info = {
     .setName('queue')
     .setDescription('Sends the queue of the current player.'),
   description: 'Sends the queue of the current player.',
-  permissions: [PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ManageMessages],
-  cooldown: 7
+  cooldown: 7,
+  permissions: [PermissionsBitField.Flags.AddReactions, PermissionsBitField.Flags.ManageMessages]
 };

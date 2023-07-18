@@ -1,4 +1,9 @@
-import { codeBlock, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {
+  codeBlock,
+  ChatInputCommandInteraction,
+  SlashCommandBuilder,
+  PermissionsBitField
+} from 'discord.js';
 import logger from '../utils/logger';
 import * as config from '../config.json';
 import { client } from '../index';
@@ -45,5 +50,6 @@ module.exports.info = {
     .addStringOption((option) =>
       option.setName('code').setDescription('your code.').setRequired(true)
     ),
-  description: "Owner Only Command, Don't Bother."
+  description: "Owner Only Command, Don't Bother.",
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

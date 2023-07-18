@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { canModifyQueue } from '../structs/MusicQueue';
 import { client } from '../index';
 
@@ -30,13 +30,22 @@ module.exports.execute = (interaction: ChatInputCommandInteraction) => {
 
   const content = { content: `🔀 Queue is shuffled by <@${interaction.user.id}>!` };
 
-  if (interaction.replied) interaction.followUp(content).catch(console.error);
-  else interaction.reply(content).catch(console.error);
+  if (interaction.replied)
+    interaction
+      .followUp(content)
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg!.delete(), 5000));
+  else
+    interaction
+      .reply(content)
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg!.delete(), 5000));
 };
 
 module.exports.info = {
   name: 'shuffle',
   slash: new SlashCommandBuilder().setName('shuffle').setDescription('shuffles the Queue.'),
   description: 'shuffles the Queue.',
-  cooldown: 1
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

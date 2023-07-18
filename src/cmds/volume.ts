@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
 import { client } from '../index';
 import { canModifyQueue } from '../structs/MusicQueue';
 
@@ -40,7 +40,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
 
   return interaction
     .reply({ content: `Volume set to %${volumeArg}`, ephemeral: true })
-    .catch(console.error);
+    .catch(console.error)
+    .then((msg) => setTimeout(() => msg!.delete(), 5000));
 };
 
 module.exports.info = {
@@ -51,5 +52,7 @@ module.exports.info = {
     .addNumberOption((option) =>
       option.setName('volume').setDescription('amount.').setRequired(true)
     ),
-  description: 'Changes Volume.'
+  description: 'Changes Volume.',
+  cooldown: 1,
+  permissions: [PermissionsBitField.Flags.SendMessages]
 };

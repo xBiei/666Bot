@@ -2,6 +2,7 @@ import {
   ChatInputCommandInteraction,
   GuildMember,
   NewsChannel,
+  PermissionsBitField,
   SlashCommandBuilder,
   TextChannel,
   ThreadChannel
@@ -60,5 +61,6 @@ module.exports.info = {
     .addNumberOption((option) =>
       option.setName('amount').setDescription('The amount of messages to delete.').setRequired(true)
     ),
-  description: 'Clears the given number of messages.'
+  description: 'Clears the given number of messages.',
+  permissions: [PermissionsBitField.Flags.ManageMessages, PermissionsBitField.Flags.SendMessages]
 };
