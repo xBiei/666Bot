@@ -7,7 +7,9 @@ import {
   search as ytSearch,
   soundcloud,
   YouTubeStream,
-  SoundCloudStream
+  SoundCloudStream,
+  is_expired,
+  refreshToken
 } from 'play-dl';
 
 export interface SongData {
@@ -32,6 +34,10 @@ export class Song {
     const isSO = (await validate(url)) === 'so_track';
     const isSP = (await validate(url)) === 'sp_track';
     let songInfo;
+
+    if (is_expired()) {
+      await refreshToken();
+    }
 
     // YT URL
     if (isYT) {
