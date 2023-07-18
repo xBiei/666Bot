@@ -48,7 +48,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
 
   return interaction
     .reply({ embeds: [nowPlaying] })
-    .then((msg) => setTimeout(() => msg!.delete(), 5000));
+    .then((msg) => setTimeout(() => msg?.delete(), 5000))
+    .catch(console.error);
 };
 
 module.exports.info = {

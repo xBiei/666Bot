@@ -26,12 +26,14 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
       interaction
         .followUp(content)
         .catch(console.error)
-        .then((msg) => setTimeout(() => msg!.delete(), 5000));
+        .then((msg) => setTimeout(() => msg?.delete(), 5000))
+        .catch(console.error);
     else
       interaction
         .reply(content)
         .catch(console.error)
-        .then((msg) => setTimeout(() => msg!.delete(), 5000));
+        .then((msg) => setTimeout(() => msg?.delete(), 5000))
+        .catch(console.error);
 
     return true;
   }
@@ -41,12 +43,14 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     interaction
       .followUp(content)
       .catch(console.error)
-      .then((msg) => setTimeout(() => msg!.delete(), 5000));
+      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch(console.error);
   else
     interaction
       .reply(content)
       .catch(console.error)
-      .then((msg) => setTimeout(() => msg!.delete(), 5000));
+      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch(console.error);
   return false;
 };
 

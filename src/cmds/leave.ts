@@ -25,12 +25,14 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     interaction
       .followUp({ content: `⏹️ Queue stopped By ${interaction.user.id}` })
       .catch(console.error)
-      .then((msg) => setTimeout(() => msg!.delete(), 5000));
+      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch(console.error);
   else
     interaction
       .reply({ content: `⏹️ Queue stopped By ${interaction.user.id}` })
       .catch(console.error)
-      .then((msg) => setTimeout(() => msg!.delete(), 5000));
+      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch(console.error);
 };
 
 module.exports.info = {

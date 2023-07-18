@@ -262,7 +262,8 @@ export class MusicQueue {
             this.textChannel
               .send(`I'm muted! By <@${user.id}>`)
               .catch(console.error)
-              .then((msg) => setTimeout(() => msg!.delete(), 5000));
+              .then((msg) => setTimeout(() => msg?.delete(), 5000))
+              .catch(console.error);
           } else {
             this.resource.volume?.setVolumeLogarithmic(
               (!this.volume ? (this.volume = 10) : this.volume) / 100
@@ -270,7 +271,8 @@ export class MusicQueue {
             this.textChannel
               .send(`unmuted!`)
               .catch(console.error)
-              .then((msg) => setTimeout(() => msg!.delete(), 5000));
+              .then((msg) => setTimeout(() => msg?.delete(), 5000))
+              .catch(console.error);
           }
           break;
 
@@ -283,7 +285,8 @@ export class MusicQueue {
           this.textChannel
             .send(`Volume Decreased to ${this.volume}! By <@${user.id}>`)
             .catch(console.error)
-            .then((msg) => setTimeout(() => msg!.delete(), 5000));
+            .then((msg) => setTimeout(() => msg?.delete(), 5000))
+            .catch(console.error);
           break;
 
         case '🔊':
@@ -295,7 +298,8 @@ export class MusicQueue {
           this.textChannel
             .send(`Volume Increased to ${this.volume}! By <@${user.id}>`)
             .catch(console.error)
-            .then((msg) => setTimeout(() => msg!.delete(), 5000));
+            .then((msg) => setTimeout(() => msg?.delete(), 5000))
+            .catch(console.error);
           break;
 
         case '🔁':

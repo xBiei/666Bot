@@ -41,7 +41,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   return interaction
     .reply({ content: `Volume set to %${volumeArg}`, ephemeral: true })
     .catch(console.error)
-    .then((msg) => setTimeout(() => msg!.delete(), 5000));
+    .then((msg) => setTimeout(() => msg?.delete(), 5000))
+    .catch(console.error);
 };
 
 module.exports.info = {
