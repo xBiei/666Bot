@@ -1,6 +1,5 @@
 import {
   ChatInputCommandInteraction,
-  GuildMember,
   NewsChannel,
   PermissionsBitField,
   SlashCommandBuilder,
@@ -10,25 +9,6 @@ import {
 import logger from '../utils/logger';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
-  if (
-    !interaction.guild?.members.me
-      ?.permissionsIn(interaction.channel as TextChannel)
-      .has('ManageMessages')
-  )
-    return interaction.reply({
-      content: 'I need the `Manage Messages` permission to use this command.',
-      ephemeral: true
-    });
-  else if (
-    !(interaction.member as GuildMember)
-      ?.permissionsIn(interaction.channel as TextChannel)
-      .has('ManageMessages')
-  )
-    return interaction.reply({
-      content: 'You need the `Manage Messages` permission to use this command.',
-      ephemeral: true
-    });
-
   const amount = interaction.options.getNumber('amount') as number;
 
   if (amount <= 1) {
