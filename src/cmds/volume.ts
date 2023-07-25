@@ -5,7 +5,7 @@ import { canModifyQueue } from '../structs/MusicQueue';
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   const queue = client.queues.get(interaction.guild!.id);
   const guildMember = interaction.guild!.members.cache.get(interaction.user.id);
-  const volumeArg = interaction.options.getInteger('volume');
+  const volumeArg = interaction.options.getNumber('volume');
 
   if (!queue)
     return interaction

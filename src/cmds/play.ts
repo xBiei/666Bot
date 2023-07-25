@@ -46,13 +46,14 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
   if (interaction.replied)
     await interaction
       .editReply('⏳ Loading...')
-      .catch(console.error)
-      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch()
+      .then((msg) => setTimeout(() => msg.delete(), 5000))
       .catch(console.error);
   else
     await interaction
       .reply('⏳ Loading...')
-      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .catch()
+      .then((msg) => setTimeout(() => msg.delete(), 5000))
       .catch(console.error);
 
   // Start the playlist if playlist url was provided
