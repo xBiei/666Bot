@@ -7,7 +7,7 @@ import {
   TextChannel
 } from 'discord.js';
 import { client } from '../index';
-import { MusicQueue } from '../structs/MusicQueue';
+import { TracksQueue } from '../structs/TracksQueue';
 import { Playlist } from '../structs/Playlist';
 import { Song } from '../structs/Song';
 
@@ -57,7 +57,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (queue) {
     queue.songs.push(...playlist.videos);
   } else {
-    const newQueue = new MusicQueue({
+    const newQueue = new TracksQueue({
       interaction,
       textChannel: interaction.channel! as TextChannel,
       connection: joinVoiceChannel({
@@ -105,7 +105,7 @@ module.exports.info = {
   name: 'playlist',
   slash: new SlashCommandBuilder()
     .setName('playlist')
-    .setDescription('Plays music from a playlist.')
+    .setDescription('Plays tracks from a playlist.')
     .addStringOption((option) =>
       option.setName('query').setDescription('The link/text you want to play').setRequired(true)
     ),

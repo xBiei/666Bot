@@ -15,7 +15,7 @@ import path from 'path';
 import { CommandData } from '../index';
 import { MissingPermissionsException, checkPermissions, PermissionResult } from '../utils/perms';
 import * as config from '../config.json';
-import { MusicQueue } from './MusicQueue';
+import { TracksQueue } from './TracksQueue';
 import { restApi } from '../utils/rest';
 import { QuickDB } from 'quick.db';
 import logger from '../utils/logger';
@@ -30,7 +30,7 @@ export class CustomClient {
   public contextCommands = new Array<RESTPostAPIContextMenuApplicationCommandsJSONBody>();
   public contextCommandsMap = new Collection<String, CommandData>();
   public cooldowns = new Collection<string, Collection<Snowflake, number>>();
-  public queues = new Collection<Snowflake, MusicQueue>();
+  public queues = new Collection<Snowflake, TracksQueue>();
 
   public constructor(public readonly client: Client) {
     this.client.login(config.token);
@@ -128,7 +128,7 @@ export class CustomClient {
 
       if (!command) return;
 
-      // Cooldown Check
+      // Cool down Check
       if (!this.cooldowns.has(interaction.commandName)) {
         this.cooldowns.set(interaction.commandName, new Collection());
       }
@@ -159,7 +159,7 @@ export class CustomClient {
         const permissionsCheck: PermissionResult = await checkPermissions(command, interaction);
 
         if (permissionsCheck.result) {
-          command.execute(interaction as ChatInputCommandInteraction);
+          await command.execute(interaction as ChatInputCommandInteraction);
           await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
         } else {
           throw new MissingPermissionsException(permissionsCheck.missing);

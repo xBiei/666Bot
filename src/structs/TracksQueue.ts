@@ -30,7 +30,7 @@ export interface QueueOptions {
 export const canModifyQueue = (member: GuildMember) =>
   member.voice.channelId === member.guild.members.me!.voice.channelId;
 
-export class MusicQueue {
+export class TracksQueue {
   public readonly interaction!: Interaction;
   public readonly connection!: VoiceConnection;
   public readonly player: AudioPlayer;

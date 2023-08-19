@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
-import { canModifyQueue } from '../structs/MusicQueue';
+import { canModifyQueue } from '../structs/TracksQueue';
 import { client } from '../index';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
