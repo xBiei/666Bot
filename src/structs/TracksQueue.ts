@@ -213,18 +213,20 @@ export class TracksQueue {
 
     // button components for all playing functions
     const buttons = [
-      new ButtonBuilder().setCustomId('loop').setLabel('🔁').setStyle(2),
-      new ButtonBuilder().setCustomId('shuffle').setLabel('🔀').setStyle(2),
-      new ButtonBuilder().setCustomId('pause').setLabel('⏯️').setStyle(1),
-      new ButtonBuilder().setCustomId('stop').setLabel('⏹️').setStyle(4),
-      new ButtonBuilder().setCustomId('skip').setLabel('⏭️').setStyle(2),
-      new ButtonBuilder().setCustomId('mute').setLabel('🔇').setStyle(4),
-      new ButtonBuilder().setCustomId('volume_down').setLabel('🔉').setStyle(2),
-      new ButtonBuilder().setCustomId('volume_up').setLabel('🔊').setStyle(2)
+      new ButtonBuilder().setCustomId('loop').setEmoji('🔁').setStyle(2),
+      new ButtonBuilder().setCustomId('shuffle').setEmoji('🔀').setStyle(2),
+      new ButtonBuilder().setCustomId('pause').setEmoji('⏯️').setStyle(1),
+      new ButtonBuilder().setCustomId('stop').setEmoji('⏹️').setStyle(4),
+      new ButtonBuilder().setCustomId('skip').setEmoji('⏭️').setStyle(2),
+      new ButtonBuilder().setCustomId('empty').setEmoji('⬛').setStyle(2).setDisabled(true),
+      new ButtonBuilder().setCustomId('mute').setEmoji('🔇').setStyle(4),
+      new ButtonBuilder().setCustomId('volume_down').setEmoji('🔉').setStyle(2),
+      new ButtonBuilder().setCustomId('volume_up').setEmoji('🔊').setStyle(2),
+      new ButtonBuilder().setCustomId('empty1').setEmoji('⬛').setStyle(2).setDisabled(true)
     ];
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons.slice(0, 5));
-    const secondRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons.slice(5, 8));
+    const secondRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons.slice(5, 10));
 
     const playingMessage = await this.textChannel
       .send({
