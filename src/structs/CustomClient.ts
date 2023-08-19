@@ -159,7 +159,7 @@ export class CustomClient {
         const permissionsCheck: PermissionResult = await checkPermissions(command, interaction);
 
         if (permissionsCheck.result) {
-          command.execute(interaction as ChatInputCommandInteraction);
+          command.execute(interaction as ChatInputCommandInteraction).catch(logger.error);
           await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
         } else {
           throw new MissingPermissionsException(permissionsCheck.missing);
