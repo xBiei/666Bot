@@ -159,7 +159,20 @@ export class CustomClient {
         const permissionsCheck: PermissionResult = await checkPermissions(command, interaction);
 
         if (permissionsCheck.result) {
-          command.execute(interaction as ChatInputCommandInteraction).catch(logger.error);
+          command.execute(interaction as ChatInputCommandInteraction).catch((err) =>
+            logger.log({
+              level: 'error',
+              message: 'An error occurred while executing a command!',
+              meta: {
+                channel: interaction.channelId || 'N/A',
+                guild: interaction.guildId || 'N/A',
+                user: interaction.user.id || 'N/A',
+                command: interaction.commandName || 'N/A',
+                errorMessage: (err as Error).message || 'N/A'
+              },
+              error: err
+            })
+          );
           await db.add(`${interaction.guildId}.${interaction.commandName}`, 1);
         } else {
           throw new MissingPermissionsException(permissionsCheck.missing);
