@@ -46,13 +46,13 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
     await interaction
       .editReply('⏳ Loading...')
       .catch()
-      .then((msg) => setTimeout(() => msg.delete(), 5000))
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
   else
     await interaction
       .reply('⏳ Loading...')
       .catch()
-      .then((msg) => setTimeout(() => msg.delete(), 5000))
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
 
   // Start the playlist if playlist url was provided
@@ -83,7 +83,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
           content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`
         })
         .catch(console.error)
-        .then((msg) => setTimeout(() => msg?.delete(), 5000))
+        .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
         .catch(console.error);
     else
       return interaction
@@ -92,7 +92,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
           ephemeral: true
         })
         .catch(console.error)
-        .then((msg) => setTimeout(() => msg?.delete(), 5000))
+        .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
         .catch(console.error);
   }
 

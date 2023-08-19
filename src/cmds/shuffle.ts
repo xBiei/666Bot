@@ -19,10 +19,10 @@ module.exports.execute = (interaction: ChatInputCommandInteraction) => {
       .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
       .catch(console.error);
 
-  let songs = queue.songs;
+  const songs = queue.songs;
 
   for (let i = songs.length - 1; i > 1; i--) {
-    let j = 1 + Math.floor(Math.random() * i);
+    const j = 1 + Math.floor(Math.random() * i);
     [songs[i], songs[j]] = [songs[j], songs[i]];
   }
 
@@ -34,13 +34,13 @@ module.exports.execute = (interaction: ChatInputCommandInteraction) => {
     interaction
       .followUp(content)
       .catch(console.error)
-      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
   else
     interaction
       .reply(content)
       .catch(console.error)
-      .then((msg) => setTimeout(() => msg?.delete(), 5000))
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
 };
 

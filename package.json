@@ -24,6 +24,8 @@
     "winston-discord-transport": "^1.3.0"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
     "eslint": "^8.34.0",
     "prettier": "^3.0.0"
   }

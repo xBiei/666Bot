@@ -28,7 +28,7 @@ export class CustomClient {
   public slashCommands = new Array<RESTPostAPIChatInputApplicationCommandsJSONBody>();
   public slashCommandsMap = new Collection<string, CommandData>();
   public contextCommands = new Array<RESTPostAPIContextMenuApplicationCommandsJSONBody>();
-  public contextCommandsMap = new Collection<String, CommandData>();
+  public contextCommandsMap = new Collection<string, CommandData>();
   public cooldowns = new Collection<string, Collection<Snowflake, number>>();
   public queues = new Collection<Snowflake, TracksQueue>();
 
@@ -67,7 +67,7 @@ export class CustomClient {
       if (err) {
         console.log(err);
       } else {
-        let obj = JSON.parse(data);
+        const obj = JSON.parse(data);
         obj.status = status;
         obj.activity = activity;
         obj.activityType = Number(type);
@@ -82,7 +82,7 @@ export class CustomClient {
       if (err) {
         console.log(err);
       } else {
-        let obj = JSON.parse(data);
+        const obj = JSON.parse(data);
         obj.status = status;
         obj.activity = activity;
         obj.activityType = Number(type);
@@ -134,11 +134,11 @@ export class CustomClient {
       }
 
       const now = Date.now();
-      const timestamps: any = this.cooldowns.get(interaction.commandName);
+      const timestamps = this.cooldowns.get(interaction.commandName);
       const cooldownAmount = (command.info.cooldown || 1) * 1000;
 
-      if (timestamps.has(interaction.user.id)) {
-        const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
+      if (timestamps?.has(interaction.user.id)) {
+        const expirationTime = (timestamps?.get(interaction.user.id) || 0) + cooldownAmount;
 
         if (now < expirationTime) {
           const timeLeft = (expirationTime - now) / 1000;
@@ -151,8 +151,8 @@ export class CustomClient {
         }
       }
 
-      timestamps.set(interaction.user.id, now);
-      setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
+      timestamps?.set(interaction.user.id, now);
+      setTimeout(() => timestamps?.delete(interaction.user.id), cooldownAmount);
 
       // Permissions Check
       try {
@@ -164,7 +164,7 @@ export class CustomClient {
         } else {
           throw new MissingPermissionsException(permissionsCheck.missing);
         }
-      } catch (error: any) {
+      } catch (error: any | never) {
         console.error(error);
 
         logger.log({
@@ -195,7 +195,7 @@ export class CustomClient {
   }
 
   private async onDebug() {
-    this.client.on(Events.Debug, async (msg): Promise<any> => {
+    this.client.on(Events.Debug, async (msg) => {
       logger.log({
         level: 'debug',
         message: 'A debug message occurred in Client Main process!',
@@ -207,7 +207,7 @@ export class CustomClient {
   }
 
   private async onWarn() {
-    this.client.on(Events.Warn, async (msg): Promise<any> => {
+    this.client.on(Events.Warn, async (msg) => {
       logger.log({
         level: 'warn',
         message: 'A warning occurred in Client Main process!',
@@ -219,7 +219,7 @@ export class CustomClient {
   }
 
   private async onError() {
-    this.client.on(Events.Error, async (msg): Promise<any> => {
+    this.client.on(Events.Error, async (msg) => {
       logger.log({
         level: 'error',
         message: 'An error occurred in Client Main process!',

@@ -22,7 +22,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   const seek = queue.resource.playbackDuration / 1000;
   const left = song.duration - seek;
 
-  let nowPlaying = new EmbedBuilder()
+  const nowPlaying = new EmbedBuilder()
     .setTitle('Now Playing')
     .setDescription(`${song.title}\n${song.url}`)
     .setColor('#f0e9e9');
@@ -48,7 +48,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
 
   return interaction
     .reply({ embeds: [nowPlaying] })
-    .then((msg) => setTimeout(() => msg?.delete(), 5000))
+    .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
     .catch(console.error);
 };
 

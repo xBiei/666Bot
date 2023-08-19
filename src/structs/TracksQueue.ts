@@ -94,7 +94,9 @@ export class TracksQueue {
             if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
               try {
                 this.connection.destroy();
-              } catch {}
+              } catch (err) {
+                console.error(err);
+              }
             }
           } finally {
             this.readyLock = false;
@@ -162,7 +164,9 @@ export class TracksQueue {
       if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
         try {
           this.connection.destroy();
-        } catch {}
+        } catch  (err) {
+          console.error(err);
+        }
       }
       client.queues.delete(this.interaction.guild!.id);
 
@@ -262,7 +266,7 @@ export class TracksQueue {
             this.textChannel
               .send(`I'm muted! By <@${user.id}>`)
               .catch(console.error)
-              .then((msg) => setTimeout(() => msg?.delete(), 5000))
+              .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
               .catch(console.error);
           } else {
             this.resource.volume?.setVolumeLogarithmic(
@@ -271,7 +275,7 @@ export class TracksQueue {
             this.textChannel
               .send(`unmuted!`)
               .catch(console.error)
-              .then((msg) => setTimeout(() => msg?.delete(), 5000))
+              .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
               .catch(console.error);
           }
           break;
@@ -285,7 +289,7 @@ export class TracksQueue {
           this.textChannel
             .send(`Volume Decreased to ${this.volume}! By <@${user.id}>`)
             .catch(console.error)
-            .then((msg) => setTimeout(() => msg?.delete(), 5000))
+            .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
             .catch(console.error);
           break;
 
@@ -298,7 +302,7 @@ export class TracksQueue {
           this.textChannel
             .send(`Volume Increased to ${this.volume}! By <@${user.id}>`)
             .catch(console.error)
-            .then((msg) => setTimeout(() => msg?.delete(), 5000))
+            .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
             .catch(console.error);
           break;
 

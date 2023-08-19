@@ -12,7 +12,7 @@ import { Playlist } from '../structs/Playlist';
 import { Song } from '../structs/Song';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
-  let argSongName = interaction.options.getString('query', true);
+  const argSongName = interaction.options.getString('query', true);
 
   const guildMember = interaction.guild!.members.cache.get(interaction.user.id);
   const { channel } = guildMember!.voice;
@@ -73,7 +73,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     newQueue.enqueue(playlist.videos[0]);
   }
 
-  let playlistEmbed = new EmbedBuilder()
+  const playlistEmbed = new EmbedBuilder()
     .setTitle(`Youtube Playlist - ${playlist.data.length} songs}`)
     .setDescription(
       playlist.videos
@@ -91,14 +91,14 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
         content: `⏯ Playlist started by <@${interaction.user.id}>!`,
         embeds: [playlistEmbed]
       })
-      .then((msg) => setTimeout(() => msg!.delete(), 10000));
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000)).catch(console.error);
   interaction
     .reply({
       content: `⏯ Playlist started by <@${interaction.user.id}>!`,
       embeds: [playlistEmbed]
     })
     .catch(console.error)
-    .then((msg) => setTimeout(() => msg!.delete(), 10000));
+    .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000)).catch(console.error);
 };
 
 module.exports.info = {
