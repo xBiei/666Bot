@@ -11,7 +11,13 @@ import {
   VoiceConnectionState,
   VoiceConnectionStatus
 } from '@discordjs/voice';
-import { Interaction, Message, TextChannel, User } from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ComponentType,
+  Interaction,
+  TextChannel
+} from 'discord.js';
 import { promisify } from 'node:util';
 import { client } from '../index';
 import * as config from '../config.json';
@@ -164,7 +170,7 @@ export class TracksQueue {
       if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
         try {
           this.connection.destroy();
-        } catch  (err) {
+        } catch (err) {
           console.error(err);
         }
       }
@@ -205,135 +211,159 @@ export class TracksQueue {
   private async sendPlayingMessage(newState: any) {
     const song = (newState.resource as AudioResource<Song>).metadata;
 
-    let playingMessage: Message;
+    // button components for all playing functions
+    const buttons = [
+      new ButtonBuilder().setCustomId('loop').setLabel('🔁').setStyle(2),
+      new ButtonBuilder().setCustomId('shuffle').setLabel('🔀').setStyle(2),
+      new ButtonBuilder().setCustomId('pause').setLabel('⏯️').setStyle(1),
+      new ButtonBuilder().setCustomId('stop').setLabel('⏹️').setStyle(4),
+      new ButtonBuilder().setCustomId('skip').setLabel('⏭️').setStyle(2),
+      new ButtonBuilder().setCustomId('mute').setLabel('🔇').setStyle(4),
+      new ButtonBuilder().setCustomId('volume_down').setLabel('🔉').setStyle(2),
+      new ButtonBuilder().setCustomId('volume_up').setLabel('🔊').setStyle(2)
+    ];
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons.slice(0, 5));
+    const secondRow = new ActionRowBuilder<ButtonBuilder>().addComponents(buttons.slice(5, 8));
+
+    const playingMessage = await this.textChannel
+      .send({
+        content: (newState.resource as AudioResource<Song>).metadata.startMessage(),
+        components: [row, secondRow]
+      })
+      .catch((error) => {
+        console.error(error);
+        logger.error(error);
+        return;
+      });
 
     try {
-      playingMessage = await this.textChannel.send(
-        (newState.resource as AudioResource<Song>).metadata.startMessage()
-      );
+      const collector = playingMessage?.createMessageComponentCollector({
+        componentType: ComponentType.Button,
+        filter: (interaction: any) => interaction.user.id === this.interaction.user.id,
+        time: song.duration > 0 ? song.duration * 1000 : 600000
+      });
 
-      await playingMessage.react('🔇');
-      await playingMessage.react('🔁');
-      await playingMessage.react('🔀');
-      await playingMessage.react('🔉');
-      await playingMessage.react('⏯️');
-      await playingMessage.react('⏹️');
-      await playingMessage.react('⏭️');
-      await playingMessage.react('🔊');
+      if (!collector) return;
+      collector.on('collect', async (response) => {
+        const member = response.member;
+        Object.defineProperty(this.interaction, 'user', {
+          value: member.user
+        });
+
+        switch (response.customId) {
+          case 'skip':
+            await this.bot.slashCommandsMap.get('skip')!.execute(this.interaction);
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'pause':
+            if (this.player.state.status == AudioPlayerStatus.Playing) {
+              await this.bot.slashCommandsMap.get('pause')!.execute(this.interaction);
+            } else {
+              await this.bot.slashCommandsMap.get('resume')!.execute(this.interaction);
+            }
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'mute':
+            if (!canModifyQueue(member)) {
+              response.reply({
+                content: "You're not in the channel, Troller!!",
+                ephemeral: true
+              });
+              break;
+            }
+            this.muted = !this.muted;
+            if (this.muted) {
+              this.resource.volume?.setVolumeLogarithmic(0);
+              this.textChannel
+                .send(`I'm muted! By <@${member.id}>`)
+                .catch(console.error)
+                .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+                .catch(console.error);
+            } else {
+              this.resource.volume?.setVolumeLogarithmic(
+                (!this.volume ? (this.volume = 10) : this.volume) / 100
+              );
+              this.textChannel
+                .send(`unmuted!`)
+                .catch(console.error)
+                .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+                .catch(console.error);
+            }
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'volume_down':
+            if (this.volume == 0) return;
+            if (!canModifyQueue(member)) {
+              response.reply({
+                content: "You're not in the channel, Troller!!",
+                ephemeral: true
+              });
+              break;
+            }
+            this.volume = Math.max(this.volume - 10, 0);
+            this.resource.volume?.setVolumeLogarithmic(this.volume / 100);
+            this.textChannel
+              .send(`Volume Decreased to ${this.volume}! By <@${member.id}>`)
+              .catch(console.error)
+              .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+              .catch(console.error);
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'volume_up':
+            if (this.volume == 100) return;
+            if (!canModifyQueue(member)) {
+              response.reply({
+                content: "You're not in the channel, Troller!!",
+                ephemeral: true
+              });
+              break;
+            }
+            this.volume = Math.min(this.volume + 10, 100);
+            this.resource.volume?.setVolumeLogarithmic(this.volume / 100);
+            this.textChannel
+              .send(`Volume Increased to ${this.volume}! By <@${member.id}>`)
+              .catch(console.error)
+              .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+              .catch(console.error);
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'loop':
+            await this.bot.slashCommandsMap.get('loop')!.execute(this.interaction, this.bot);
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'shuffle':
+            await this.bot.slashCommandsMap.get('shuffle')!.execute(this.interaction, this.bot);
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          case 'stop':
+            await this.bot.slashCommandsMap.get('stop')!.execute(this.interaction, this.bot);
+            collector.stop('track stopped');
+            response.reply({ content: 'Done!', ephemeral: true });
+            break;
+
+          default:
+            break;
+        }
+      });
+      collector.on('end', () => {
+        if (config.pruning) {
+          setTimeout(() => {
+            playingMessage?.delete().catch();
+          }, 3000);
+        }
+      });
     } catch (error: any) {
       console.error(error);
       logger.error(error);
-      this.textChannel.send(error.message);
       return;
     }
-
-    const filter = (reaction: any, user: User) => user.id !== this.textChannel.client.user!.id;
-
-    const collector = playingMessage.createReactionCollector({
-      filter,
-      time: song.duration > 0 ? song.duration * 1000 : 600000
-    });
-
-    collector.on('collect', async (reaction, user) => {
-      if (!this.songs) return;
-
-      const member = await playingMessage.guild!.members.fetch(user);
-      Object.defineProperty(this.interaction, 'user', {
-        value: user
-      });
-
-      switch (reaction.emoji.name) {
-        case '⏭️':
-          reaction.users.remove(user).catch(console.error);
-          await this.bot.slashCommandsMap.get('skip')!.execute(this.interaction);
-          break;
-
-        case '⏯️':
-          reaction.users.remove(user).catch(console.error);
-          if (this.player.state.status == AudioPlayerStatus.Playing) {
-            await this.bot.slashCommandsMap.get('pause')!.execute(this.interaction);
-          } else {
-            await this.bot.slashCommandsMap.get('resume')!.execute(this.interaction);
-          }
-          break;
-
-        case '🔇':
-          reaction.users.remove(user).catch(console.error);
-          if (!canModifyQueue(member)) return "You're not in the channel, Troller!";
-          this.muted = !this.muted;
-          if (this.muted) {
-            this.resource.volume?.setVolumeLogarithmic(0);
-            this.textChannel
-              .send(`I'm muted! By <@${user.id}>`)
-              .catch(console.error)
-              .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
-              .catch(console.error);
-          } else {
-            this.resource.volume?.setVolumeLogarithmic(
-              (!this.volume ? (this.volume = 10) : this.volume) / 100
-            );
-            this.textChannel
-              .send(`unmuted!`)
-              .catch(console.error)
-              .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
-              .catch(console.error);
-          }
-          break;
-
-        case '🔉':
-          reaction.users.remove(user).catch(console.error);
-          if (this.volume == 0) return;
-          if (!canModifyQueue(member)) return "You're not in the channel, Troller!";
-          this.volume = Math.max(this.volume - 10, 0);
-          this.resource.volume?.setVolumeLogarithmic(this.volume / 100);
-          this.textChannel
-            .send(`Volume Decreased to ${this.volume}! By <@${user.id}>`)
-            .catch(console.error)
-            .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
-            .catch(console.error);
-          break;
-
-        case '🔊':
-          reaction.users.remove(user).catch(console.error);
-          if (this.volume == 100) return;
-          if (!canModifyQueue(member)) return "You're not in the channel, Troller!";
-          this.volume = Math.min(this.volume + 10, 100);
-          this.resource.volume?.setVolumeLogarithmic(this.volume / 100);
-          this.textChannel
-            .send(`Volume Increased to ${this.volume}! By <@${user.id}>`)
-            .catch(console.error)
-            .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
-            .catch(console.error);
-          break;
-
-        case '🔁':
-          reaction.users.remove(user).catch(console.error);
-          await this.bot.slashCommandsMap.get('loop')!.execute(this.interaction, this.bot);
-          break;
-
-        case '🔀':
-          reaction.users.remove(user).catch(console.error);
-          await this.bot.slashCommandsMap.get('shuffle')!.execute(this.interaction, this.bot);
-          break;
-
-        case '⏹️':
-          reaction.users.remove(user).catch(console.error);
-          await this.bot.slashCommandsMap.get('stop')!.execute(this.interaction, this.bot);
-          collector.stop();
-          break;
-
-        default:
-          reaction.users.remove(user).catch(console.error);
-          break;
-      }
-    });
-
-    collector.on('end', () => {
-      if (config.pruning) {
-        setTimeout(() => {
-          playingMessage.delete().catch();
-        }, 3000);
-      }
-    });
   }
 }
