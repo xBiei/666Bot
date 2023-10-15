@@ -6,7 +6,6 @@ import {
 } from 'discord.js';
 import logger from '../utils/logger';
 import * as config from '../config.json';
-import { client } from '../index';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.user.id !== config.owner)
