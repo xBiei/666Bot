@@ -39,17 +39,17 @@ export class CustomClient {
       console.log(`${this.client.user!.username} ready!`);
       logger.info(`${this.client.user!.username} ready!`);
 
+      this.client.user?.setPresence({
+        status: config.status as PresenceStatusData
+      });
+      this.client.user?.setActivity(config.activity, { type: config.activityType });
+
       this.registerSlashCommands();
     });
 
     this.onDebug();
     this.onError();
     this.onWarn();
-
-    this.client.user?.setPresence({
-      status: config.status as PresenceStatusData
-    });
-    this.client.user?.setActivity(config.activity, { type: config.activityType });
 
     this.onInteractionCreate();
   }
