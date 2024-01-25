@@ -185,7 +185,7 @@ export class CustomClient {
         } else {
           interaction
             .reply({
-              content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`,
+              content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`,
               ephemeral: true
             })
             .catch(console.error);

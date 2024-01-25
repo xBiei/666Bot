@@ -80,7 +80,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
     if (interaction.replied)
       return await interaction
         .editReply({
-          content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`
+          content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`
         })
         .catch(console.error)
         .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
@@ -88,7 +88,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
     else
       return interaction
         .reply({
-          content: `Error running this command. Idk why, but there's an error; Contact me here https://twitter.com/xBiei`,
+          content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`,
           ephemeral: true
         })
         .catch(console.error)
