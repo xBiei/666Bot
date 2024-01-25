@@ -16,6 +16,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
         content: 'The Queue is empty, use /play command to add some stuff!',
         ephemeral: true
       })
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
 
   const song = queue.songs[0];

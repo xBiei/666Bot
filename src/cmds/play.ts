@@ -103,6 +103,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
       .send({
         content: `✅ **${song.title}** has been added to the queue by <@${interaction.user.id}>`
       })
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
   }
 

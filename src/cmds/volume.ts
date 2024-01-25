@@ -23,6 +23,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (!volumeArg || volumeArg === queue.volume)
     return interaction
       .reply({ content: `🔊 The current volume is: **%${queue.volume}%**` })
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
       .catch(console.error);
 
   if (isNaN(volumeArg))
@@ -40,8 +42,6 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
 
   return interaction
     .reply({ content: `Volume set to %${volumeArg}`, ephemeral: true })
-    .catch(console.error)
-    .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
     .catch(console.error);
 };
 

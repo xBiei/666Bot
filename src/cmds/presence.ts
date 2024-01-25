@@ -4,7 +4,7 @@ import { client } from '../index';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.user.id !== config.owner)
-    return await interaction.reply('You are not the owner!');
+    return await interaction.reply({ content: 'You are not the owner!', ephemeral: true });
 
   const status = interaction.options.getString('presence', true) as PresenceStatusData;
   const activity = interaction.options.getString('activity', true);

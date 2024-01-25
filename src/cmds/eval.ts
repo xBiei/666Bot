@@ -9,7 +9,10 @@ import * as config from '../config.json';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (interaction.user.id !== config.owner)
-    return await interaction.reply('You are not the owner!');
+    return await interaction
+      .reply('You are not the owner!')
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+      .catch(console.error);
 
   const clean = async (text: any) => {
     if (text && text.constructor.name == 'Promise') text = await text;

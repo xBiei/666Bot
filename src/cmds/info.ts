@@ -7,7 +7,11 @@ import {
 } from 'discord.js';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
-  if (!interaction.inGuild()) return interaction.reply('This is Guild only Command!');
+  if (!interaction.inGuild())
+    return interaction
+      .reply('This is Guild only Command!')
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+      .catch(console.error);
 
   const user = interaction.options.getUser('user', true);
   const member = interaction.options.getMember('user') as GuildMember;

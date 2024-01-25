@@ -25,8 +25,18 @@ module.exports.execute = (interaction: ChatInputCommandInteraction) => {
     content: `🔁 Queue is ${queue.loop ? `unlooped` : `looped`} by <@${interaction.user.id}>!`
   };
 
-  if (interaction.replied) interaction.followUp(content).catch(console.error);
-  else interaction.reply(content).catch(console.error);
+  if (interaction.replied)
+    interaction
+      .followUp(content)
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+      .catch(console.error);
+  else
+    interaction
+      .reply(content)
+      .catch(console.error)
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+      .catch(console.error);
 };
 
 module.exports.info = {

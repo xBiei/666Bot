@@ -7,9 +7,8 @@ import {
 import { client } from '../index';
 
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
-  let commands = client.slashCommandsMap;
-
-  let helpEmbed = new EmbedBuilder()
+  const commands = client.slashCommandsMap;
+  const helpEmbed = new EmbedBuilder()
     .setTitle('Commands List')
     .setDescription(`a List of all the available commands.`)
     .setColor('#f0e9e9');
@@ -24,7 +23,11 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
 
   helpEmbed.setTimestamp();
 
-  return interaction.reply({ embeds: [helpEmbed] }).catch(console.error);
+  return interaction
+    .reply({ embeds: [helpEmbed] })
+    .catch(console.error)
+    .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000))
+    .catch(console.error);
 };
 
 module.exports.info = {

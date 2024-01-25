@@ -28,6 +28,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     if (interaction.replied)
       return interaction
         .editReply({ content: "You're not in the channel, Troller!" })
+        .catch(console.error)
+        .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
         .catch(console.error);
     else
       return interaction
@@ -47,6 +49,8 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     if (interaction.replied)
       return interaction
         .editReply({ content: 'Playlist not found, try another one!' })
+        .catch(console.error)
+        .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
         .catch(console.error);
     else
       return interaction
@@ -91,14 +95,16 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
         content: `⏯ Playlist started by <@${interaction.user.id}>!`,
         embeds: [playlistEmbed]
       })
-      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000)).catch(console.error);
+      .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000))
+      .catch(console.error);
   interaction
     .reply({
       content: `⏯ Playlist started by <@${interaction.user.id}>!`,
       embeds: [playlistEmbed]
     })
     .catch(console.error)
-    .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000)).catch(console.error);
+    .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 10000))
+    .catch(console.error);
 };
 
 module.exports.info = {
