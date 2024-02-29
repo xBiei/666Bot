@@ -39,9 +39,11 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
     });
     return interaction.reply({ content: 'Done Done.', ephemeral: true });
   }
-  return await (interaction.channel as NewsChannel | TextChannel | ThreadChannel).bulkDelete(
-    amount
-  );
+  return await (interaction.channel as NewsChannel | TextChannel | ThreadChannel)
+    .bulkDelete(amount)
+    .then(() => {
+      interaction.reply({ content: 'Done.', ephemeral: true });
+    });
 };
 
 module.exports.info = {
