@@ -22,6 +22,11 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
       .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
       .catch(console.error);
 
+  if (!channel.joinable)
+    return interaction
+      .reply({ content: "I don't have permission to join your VC", ephemeral: true })
+      .catch(console.error);
+
   const queue = client.queues.get(interaction.guild!.id);
 
   if (queue && channel.id !== queue.connection.joinConfig.channelId)

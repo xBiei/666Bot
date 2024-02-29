@@ -61,6 +61,10 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   if (queue) {
     queue.songs.push(...playlist.videos);
   } else {
+    if (!channel.joinable)
+      return interaction
+        .reply({ content: "I don't have permission to join your VC", ephemeral: true })
+        .catch(console.error);
     const newQueue = new TracksQueue({
       interaction,
       textChannel: interaction.channel! as TextChannel,
