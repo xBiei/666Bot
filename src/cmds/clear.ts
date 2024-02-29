@@ -11,6 +11,17 @@ import logger from '../utils/logger';
 module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
   const amount = interaction.options.getNumber('amount') as number;
 
+  if (
+    !(interaction.channel as TextChannel)
+      .permissionsFor(interaction.guild!.members.me!)
+      ?.has(PermissionsBitField.Flags.ManageMessages)
+  ) {
+    return await interaction.reply({
+      content: 'I need the `Manage Messages` permission to delete messages.',
+      ephemeral: true
+    });
+  }
+
   if (amount <= 1) {
     return await interaction.reply({
       content: 'you need to input a number higher than 1.',
