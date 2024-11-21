@@ -19,7 +19,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction) => {
       .reply({ content: "You're not in the channel, Troller!", ephemeral: true })
       .catch(console.error);
 
-  if (queue.player.pause()) {
+  if (queue.player.pause(true)) {
     const content = { content: `⏯ Paused by <@${interaction.user.id}>!` };
 
     if (interaction.replied)

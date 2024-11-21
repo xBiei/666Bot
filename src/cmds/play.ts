@@ -82,31 +82,31 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
         .catch(console.error);
 
     console.error(error);
-    if (interaction.replied)
-      return await interaction
-        .editReply({
-          content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`
-        })
-        .catch(console.error)
-        .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
-        .catch(console.error);
-    else
-      return interaction
-        .reply({
-          content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`,
-          ephemeral: true
-        })
-        .catch(console.error)
-        .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
-        .catch(console.error);
+    // if (interaction.replied)
+    //   return await interaction
+    //     .editReply({
+    //       content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`
+    //     })
+    //     .catch(console.error)
+    //     .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+    //     .catch(console.error);
+    // else
+    //   return interaction
+    //     .reply({
+    //       content: `Error running this command. Idk why, but there's an error; Contact me @.xb.`,
+    //       ephemeral: true
+    //     })
+    //     .catch(console.error)
+    //     .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
+    //     .catch(console.error);
   }
 
   if (queue) {
-    queue.enqueue(song);
+    queue.enqueue(song!);
 
     return (interaction.channel as TextChannel)
       .send({
-        content: `✅ **${song.title}** has been added to the queue by <@${interaction.user.id}>`
+        content: `✅ **${song!.title}** has been added to the queue by <@${interaction.user.id}>`
       })
       .catch(console.error)
       .then((msg) => setTimeout(() => msg?.delete().catch(console.error), 5000))
@@ -125,7 +125,7 @@ module.exports.execute = async (interaction: ChatInputCommandInteraction, input:
 
   client.queues.set(interaction.guild!.id, newQueue);
 
-  newQueue.enqueue(song);
+  newQueue.enqueue(song!);
   interaction.deleteReply().catch(console.error);
 };
 
