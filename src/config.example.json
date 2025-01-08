@@ -7,5 +7,6 @@
   "status": "dnd",
   "pruning": true, // Delete msgs after leave
   "stayTime": 10, // Stay time after no activity in mins
-  "maxPlaylistSize": 15 // Max playlist size
+  "maxPlaylistSize": 15, // Max playlist size
+  "webhook": "https://discord.com/api/webhooks/1326155784220053625/wzTIlT_SLN5rM_XycnnDdb_emdOwXtxUIJecvcgKHOox3OBao1dujtJwuUDmFGsP7468"
 }

@@ -1,5 +1,7 @@
 import winston, { format } from 'winston';
 import DiscordTransport from 'winston-discord-transport';
+import * as config from '../config.json';
+
 const customFormat = format.combine(
   format.timestamp(),
   format.align(),
@@ -11,8 +13,7 @@ const logger = winston.createLogger({
   format: customFormat,
   transports: [
     new DiscordTransport({
-      webhook:
-        'https://discord.com/api/webhooks/1326155784220053625/wzTIlT_SLN5rM_XycnnDdb_emdOwXtxUIJecvcgKHOox3OBao1dujtJwuUDmFGsP7468',
+      webhook: config.webhook,
       defaultMeta: { bot: '666' }
     }),
     new winston.transports.File({ filename: 'log.json' })
